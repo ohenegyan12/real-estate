@@ -144,7 +144,7 @@ const Home = () => {
                             color: 'white'
                         }}>
                             Exclusive properties in Ghana's most prestigious locations. <br className="mobile-hide" />
-                            Curated for those who demand excellence.
+
                         </p>
                     </motion.div>
 
