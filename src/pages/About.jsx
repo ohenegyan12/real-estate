@@ -20,7 +20,7 @@ const About = () => {
             <section
                 className="section-padding"
                 style={{
-                    paddingTop: 'clamp(10rem, 13vw, 12rem)',
+                    paddingTop: 'clamp(12rem, 15vw, 15rem)',
                     paddingBottom: 'clamp(4rem, 8vw, 6rem)',
                     backgroundColor: 'var(--primary)',
                     backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=2670&auto=format&fit=crop")',
@@ -58,8 +58,8 @@ const About = () => {
             </section>
 
             {/* Our Mission & Vision */}
-            <section style={{ padding: '10rem 0' }}>
-                <div className="container grid-cols-1-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '6rem', alignItems: 'center' }}>
+            <section className="section-padding">
+                <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'clamp(2rem, 5vw, 6rem)', alignItems: 'center' }}>
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -100,15 +100,9 @@ const About = () => {
 
             {/* Stats Section */}
             {/* Stats Section */}
-            <section style={{ backgroundColor: 'var(--primary)', color: 'white', padding: '10rem 0' }}>
+            <section className="section-padding" style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
                 <div className="container">
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                        gap: '4rem',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }} className="grid-cols-1-mobile">
+                    <div className="grid-4">
                         {stats.map((stat, idx) => (
                             <div key={idx} style={{ textAlign: 'center' }}>
                                 <div style={{ color: 'var(--accent)', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>{stat.icon}</div>
@@ -121,7 +115,7 @@ const About = () => {
             </section>
 
             {/* Why Choose Us */}
-            <section style={{ padding: '10rem 0' }}>
+            <section className="section-padding">
                 <div className="container">
                     <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
                         <span style={{ color: 'var(--accent)', fontWeight: '700', letterSpacing: '1px' }}>WHY CHOOSE US</span>
@@ -130,7 +124,7 @@ const About = () => {
                         </h2>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem' }}>
+                    <div className="grid-3">
                         {[
                             { title: 'Local Expertise', description: 'Deep knowledge of Accra and surrounding prime real estate markets.' },
                             { title: 'Transparent Process', description: 'We believe in full transparency, keeping you informed at every stage.' },

@@ -72,7 +72,7 @@ const Blog = () => {
             <section
                 className="section-padding"
                 style={{
-                    paddingTop: 'clamp(10rem, 13vw, 12rem)',
+                    paddingTop: 'clamp(12rem, 15vw, 15rem)',
                     paddingBottom: 'clamp(4rem, 8vw, 6rem)',
                     backgroundColor: 'var(--primary)',
                     backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2670&auto=format&fit=crop")',
@@ -103,10 +103,46 @@ const Blog = () => {
 
             {/* Blog Content */}
             <section className="section-padding">
-                <div className="container mobile-stack" style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 992 ? '2fr 1fr' : '1fr', gap: '5rem', alignItems: 'start' }}>
+                <style>{`
+                    .blog-main-grid {
+                        display: grid;
+                        grid-template-columns: 2.5fr 1fr;
+                        gap: 5rem;
+                        align-items: start;
+                    }
+                    .blog-posts-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                        gap: 3rem;
+                    }
+                    .blog-post-image {
+                        height: 350px;
+                    }
+                    .blog-post-content {
+                        padding: 2.5rem;
+                    }
+                    @media (max-width: 1100px) {
+                        .blog-main-grid {
+                            grid-template-columns: 1fr;
+                            gap: 4rem;
+                        }
+                    }
+                    @media (max-width: 768px) {
+                        .blog-posts-grid {
+                            grid-template-columns: 1fr;
+                        }
+                        .blog-post-image {
+                            height: 240px;
+                        }
+                        .blog-post-content {
+                            padding: 1.5rem;
+                        }
+                    }
+                `}</style>
+                <div className="container blog-main-grid">
 
                     {/* Posts Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2.5rem' }}>
+                    <div className="blog-posts-grid">
                         {posts.map((post, idx) => (
                             <motion.article
                                 key={idx}
@@ -118,12 +154,12 @@ const Blog = () => {
                                     backgroundColor: 'white',
                                     borderRadius: '32px',
                                     overflow: 'hidden',
-                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
                                     display: 'flex',
                                     flexDirection: 'column'
                                 }}
                             >
-                                <div style={{ height: window.innerWidth > 768 ? '350px' : '240px', overflow: 'hidden', position: 'relative' }}>
+                                <div className="blog-post-image" style={{ overflow: 'hidden', position: 'relative' }}>
                                     <img
                                         src={post.image}
                                         alt={post.title}
@@ -133,7 +169,7 @@ const Blog = () => {
                                         {post.category}
                                     </div>
                                 </div>
-                                <div style={{ padding: window.innerWidth > 768 ? '2.5rem' : '1.5rem' }}>
+                                <div className="blog-post-content">
                                     <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.25rem', color: '#64748b', fontSize: '0.85rem' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Calendar size={14} /> {post.date}</div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><User size={14} /> By {post.author}</div>

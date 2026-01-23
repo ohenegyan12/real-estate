@@ -65,7 +65,7 @@ const PropertyDetail = () => {
             <Navbar />
 
             {/* Breadcrumbs & Title Bar */}
-            <section style={{ padding: '10rem 0 2rem', backgroundColor: 'white', borderBottom: '1px solid #f1f5f9' }}>
+            <section style={{ padding: 'clamp(12rem, 15vh, 15rem) 0 2rem', backgroundColor: 'white', borderBottom: '1px solid #f1f5f9' }}>
                 <div className="container">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
                         <Link to="/" style={{ color: '#64748b' }}>Home</Link>
@@ -75,16 +75,16 @@ const PropertyDetail = () => {
                         <span style={{ color: 'var(--primary)', fontWeight: '600' }}>Property Detail</span>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem' }}>
+                    <div className="detail-title-flex">
                         <div style={{ flex: 1, minWidth: '300px' }}>
                             <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
                                 <span style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '0.4rem 1rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: '700' }}>{property.status}</span>
                                 <span style={{ backgroundColor: '#f1f5f9', color: 'var(--primary)', padding: '0.4rem 1rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: '700' }}>{property.type}</span>
                             </div>
-                            <h1 style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
+                            <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: '800', color: 'var(--primary)', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
                                 {property.title}
                             </h1>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#64748b' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#64748b', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <MapPin size={18} color="var(--accent)" />
                                     <span>{property.location}</span>
@@ -97,10 +97,10 @@ const PropertyDetail = () => {
                             </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--primary)', letterSpacing: '-1px' }}>
+                            <div style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)', fontWeight: '900', color: 'var(--primary)', letterSpacing: '-1px' }}>
                                 {property.currency}{property.price.toLocaleString()}
                             </div>
-                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1rem' }} className="justify-end">
                                 <button style={{ width: '45px', height: '45px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', cursor: 'pointer' }}>
                                     <Share2 size={20} color="#64748b" />
                                 </button>
@@ -121,8 +121,80 @@ const PropertyDetail = () => {
 
             {/* Image Gallery */}
             <section style={{ padding: '2rem 0' }}>
+                <style>{`
+                    .detail-title-flex {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-end;
+                        flex-wrap: wrap;
+                        gap: 2rem;
+                    }
+                    .gallery-grid {
+                        display: grid;
+                        grid-template-columns: 2.3fr 1fr;
+                        gap: 1.5rem;
+                        height: 600px;
+                    }
+                    .detail-main-layout {
+                        display: grid;
+                        grid-template-columns: 2fr 1fr;
+                        gap: 3rem;
+                    }
+                    .stats-grid {
+                        display: grid;
+                        grid-template-columns: repeat(4, 1fr);
+                        gap: 1.5rem;
+                        background: white;
+                        padding: 2rem;
+                        border-radius: 24px;
+                        margin-bottom: 3rem;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+                    }
+                    @media (max-width: 1100px) {
+                        .gallery-grid {
+                            grid-template-columns: 1fr;
+                            height: auto;
+                        }
+                        .gallery-side-images {
+                            display: none !important;
+                        }
+                        .detail-main-layout {
+                            grid-template-columns: 1fr;
+                        }
+                    }
+                    @media (max-width: 768px) {
+                        .detail-title-flex {
+                            flex-direction: column;
+                            align-items: flex-start;
+                        }
+                        .detail-title-flex > div:last-child {
+                            text-align: left !important;
+                        }
+                        .detail-title-flex .justify-end {
+                            justify-content: flex-start !important;
+                        }
+                        .gallery-grid {
+                            height: 350px;
+                        }
+                        .stats-grid {
+                            grid-template-columns: repeat(2, 1fr);
+                            padding: 1.5rem;
+                            gap: 1rem;
+                        }
+                        .stats-grid > div {
+                            border-right: none !important;
+                            border-bottom: 1px solid #f1f5f9;
+                            padding-bottom: 1rem;
+                        }
+                        .stats-grid > div:nth-last-child(-n+2) {
+                            border-bottom: none;
+                            padding-bottom: 0;
+                            padding-top: 1rem;
+                        }
+                    }
+                `}</style>
                 <div className="container">
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem', height: '600px' }}>
+                    <div className="gallery-grid">
                         {/* Main Image */}
                         <div style={{ position: 'relative', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                             <img src={property.images[activeImage]} alt="Main" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -142,10 +214,10 @@ const PropertyDetail = () => {
                         </div>
 
                         {/* Side Images Grid */}
-                        <div style={{ display: 'grid', gridTemplateRows: '1fr 1fr', gap: '1.5rem' }}>
+                        <div className="gallery-side-images" style={{ display: 'grid', gridTemplateRows: '1fr 1fr', gap: '1.5rem' }}>
                             <div style={{ borderRadius: '24px', overflow: 'hidden', position: 'relative' }}>
                                 <img src={property.images[1]} alt="Gallery 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.1)', transition: 'background-color 0.3s' }} onMouseOver={(e) => e.target.style.backgroundColor = 'rgba(0,0,0,0)'} onMouseOut={(e) => e.target.style.backgroundColor = 'rgba(0,0,0,0.1)'}></div>
+                                <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.1)', transition: 'background-color 0.3s' }}></div>
                             </div>
                             <div style={{ borderRadius: '24px', overflow: 'hidden', position: 'relative' }}>
                                 <img src={property.images[2]} alt="Gallery 2" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -163,21 +235,12 @@ const PropertyDetail = () => {
 
             {/* Content Area */}
             <section style={{ padding: '3rem 0 8rem' }}>
-                <div className="container" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem' }}>
+                <div className="container detail-main-layout">
 
                     {/* Left Column - Details */}
                     <div>
                         {/* Quick Stats */}
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(4, 1fr)',
-                            gap: '1.5rem',
-                            backgroundColor: 'white',
-                            padding: '2rem',
-                            borderRadius: '24px',
-                            marginBottom: '3rem',
-                            boxShadow: '0 4px 15px rgba(0,0,0,0.03)'
-                        }}>
+                        <div className="stats-grid">
                             <div style={{ textAlign: 'center', borderRight: '1px solid #f1f5f9' }}>
                                 <div style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}><Bed size={24} /></div>
                                 <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--primary)' }}>{property.beds}</div>

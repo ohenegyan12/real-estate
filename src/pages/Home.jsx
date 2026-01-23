@@ -92,7 +92,25 @@ const Home = () => {
                     zIndex: -1
                 }} />
 
-                <div className="container" style={{ textAlign: 'center', maxWidth: '1200px', zIndex: 1, paddingTop: '60px' }}>
+                <style>{`
+                    .hero-container-inner {
+                        text-align: center;
+                        max-width: 1200px;
+                        z-index: 1;
+                        padding-top: 40px;
+                    }
+                    @media (max-width: 768px) {
+                        .hero-container-inner {
+                            padding-top: 160px;
+                            padding-bottom: 40px;
+                        }
+                        .hero-container-inner h1 {
+                            font-size: clamp(2.5rem, 10vw, 4rem) !important;
+                            margin-bottom: 1.5rem !important;
+                        }
+                    }
+                `}</style>
+                <div className="container hero-container-inner">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}

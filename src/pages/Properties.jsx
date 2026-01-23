@@ -174,7 +174,7 @@ const Properties = () => {
             <section
                 className="section-padding"
                 style={{
-                    paddingTop: 'clamp(10rem, 13vw, 12rem)',
+                    paddingTop: 'clamp(12rem, 15vw, 15rem)',
                     paddingBottom: 'clamp(4rem, 8vw, 6rem)',
                     backgroundColor: 'var(--primary)',
                     backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=2592&auto=format&fit=crop")',
@@ -210,19 +210,89 @@ const Properties = () => {
                 zIndex: 10,
                 paddingBottom: '2rem'
             }}>
+                <style>{`
+                    .filter-bar-container {
+                        backgroundColor: white;
+                        border-radius: 24px;
+                        padding: 1.5rem;
+                        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1.5rem;
+                        background: white;
+                    }
+                    .filter-top-row {
+                        display: flex;
+                        gap: 1rem;
+                        flex-wrap: wrap;
+                        align-items: center;
+                    }
+                    .search-input-wrapper {
+                        flex: 1;
+                        min-width: 300px;
+                        position: relative;
+                    }
+                    .filter-btn {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.75rem;
+                        padding: 1.1rem 1.75rem;
+                        border-radius: 16px;
+                        border: 1px solid #e2e8f0;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        background: white;
+                    }
+                    .view-toggle {
+                        display: flex;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 16px;
+                        overflow: hidden;
+                    }
+                    .results-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 2.5rem;
+                        gap: 1rem;
+                    }
+                    .sort-wrapper {
+                        display: flex;
+                        align-items: center;
+                        gap: 1rem;
+                    }
+                    @media (max-width: 992px) {
+                        .search-input-wrapper {
+                            min-width: 100%;
+                        }
+                        .filter-btn {
+                            flex: 1;
+                        }
+                        .filter-top-row .btn-primary {
+                            width: 100%;
+                            flex: none;
+                        }
+                        .results-header {
+                            flex-direction: column;
+                            align-items: flex-start;
+                        }
+                        .sort-wrapper {
+                            width: 100%;
+                        }
+                    }
+                    @media (max-width: 768px) {
+                        .mobile-hide {
+                            display: none;
+                        }
+                    }
+                `}</style>
                 <div className="container">
-                    <div style={{
-                        backgroundColor: 'white',
-                        borderRadius: '24px',
-                        padding: '1.5rem',
-                        boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '1.5rem'
-                    }}>
+                    <div className="filter-bar-container">
                         {/* Search & Top Filters */}
-                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                            <div style={{ flex: 1, minWidth: window.innerWidth > 768 ? '300px' : '100%', position: 'relative' }}>
+                        <div className="filter-top-row">
+                            <div className="search-input-wrapper">
                                 <Search style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={20} />
                                 <input
                                     type="text"
@@ -243,20 +313,10 @@ const Properties = () => {
 
                             <button
                                 onClick={() => setFilterOpen(!filterOpen)}
+                                className="filter-btn"
                                 style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '0.75rem',
-                                    padding: '1.1rem 1.75rem',
-                                    borderRadius: '16px',
-                                    border: '1px solid #e2e8f0',
                                     backgroundColor: filterOpen ? '#eff6ff' : 'white',
                                     color: filterOpen ? 'var(--accent)' : 'var(--primary)',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s',
-                                    flex: window.innerWidth <= 768 ? 1 : 'none'
                                 }}
                             >
                                 <SlidersHorizontal size={20} />
@@ -264,7 +324,7 @@ const Properties = () => {
                                 <ChevronDown size={18} style={{ transform: filterOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
                             </button>
 
-                            <div style={{ display: 'flex', border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden' }} className="mobile-hide">
+                            <div className="view-toggle mobile-hide">
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     style={{
@@ -295,8 +355,6 @@ const Properties = () => {
                                 padding: '1.1rem 2rem',
                                 borderRadius: '16px',
                                 fontWeight: '700',
-                                flex: window.innerWidth <= 768 ? '100%' : 'none',
-                                width: window.innerWidth <= 768 ? '100%' : 'auto'
                             }}>
                                 Search
                             </button>
@@ -317,7 +375,7 @@ const Properties = () => {
                                         gap: '1.5rem',
                                         paddingTop: '1.5rem',
                                         borderTop: '1px solid #f1f5f9'
-                                    }} className="grid-cols-1-mobile">
+                                    }}>
                                         <div>
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '0.9rem', color: '#64748b' }}>Property Type</label>
                                             <div style={{ position: 'relative' }}>
@@ -392,14 +450,14 @@ const Properties = () => {
             <section style={{ padding: '2rem 0 8rem' }}>
                 <div className="container">
                     {/* Results Header */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', gap: '1rem' }} className="mobile-stack">
+                    <div className="results-header">
                         <div>
                             <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--primary)' }}>
                                 {filteredProperties.length} Properties <span className="mobile-hide">Found</span>
                             </h2>
                             <p style={{ color: '#64748b' }}>Showing all listings</p>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: window.innerWidth <= 768 ? '100%' : 'auto' }}>
+                        <div className="sort-wrapper">
                             <span style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '600', whiteSpace: 'nowrap' }}>Sort By:</span>
                             <div style={{ position: 'relative', flex: 1 }}>
                                 <select style={{ width: '100%', padding: '0.65rem 2.5rem 0.65rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', appearance: 'none', backgroundColor: 'white', fontWeight: '600' }}>

@@ -34,7 +34,7 @@ const Contact = () => {
             <section
                 className="section-padding"
                 style={{
-                    paddingTop: 'clamp(10rem, 13vw, 12rem)',
+                    paddingTop: 'clamp(12rem, 15vw, 15rem)',
                     paddingBottom: 'clamp(4rem, 8vw, 6rem)',
                     backgroundColor: 'var(--primary)',
                     backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1423666639041-f56000c27a9a?q=80&w=2670&auto=format&fit=crop")',
@@ -106,7 +106,40 @@ const Contact = () => {
 
             {/* Form and Map */}
             <section className="section-padding">
-                <div className="container grid-cols-1-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem' }}>
+                <style>{`
+                    .contact-grid {
+                        display: grid;
+                        grid-template-columns: 2fr 1fr;
+                        gap: 4rem;
+                    }
+                    .contact-form-row {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 1.5rem;
+                    }
+                    .contact-info-card {
+                        background-color: white;
+                        padding: 3rem;
+                        border-radius: 32px;
+                        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
+                        height: 100%;
+                    }
+                    @media (max-width: 992px) {
+                        .contact-grid {
+                            grid-template-columns: 1fr;
+                            gap: 3rem;
+                        }
+                    }
+                    @media (max-width: 768px) {
+                        .contact-form-row {
+                            grid-template-columns: 1fr;
+                        }
+                        .contact-info-card {
+                            padding: 1.5rem;
+                        }
+                    }
+                `}</style>
+                <div className="container contact-grid">
 
                     {/* Contact Form */}
                     <motion.div
@@ -122,7 +155,7 @@ const Contact = () => {
                         </p>
 
                         <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 768 ? '1fr 1fr' : '1fr', gap: '1.5rem' }}>
+                            <div className="contact-form-row">
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <label style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.9rem' }}>Full Name</label>
                                     <input type="text" placeholder="John Doe" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
@@ -152,7 +185,7 @@ const Contact = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                     >
-                        <div style={{ backgroundColor: 'white', padding: window.innerWidth > 768 ? '3rem' : '1.5rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', height: '100%' }}>
+                        <div className="contact-info-card">
                             <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '2rem' }}>Corporate Office</h3>
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
