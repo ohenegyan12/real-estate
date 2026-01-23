@@ -63,13 +63,13 @@ const Home = () => {
             {/* Hero Section */}
             <section style={{
                 position: 'relative',
-                height: '100vh',
-                minHeight: '1000px',
+                minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                marginTop: '-80px'
+                marginTop: '-80px',
+                paddingTop: '80px'
             }}>
                 {/* Background Image with Parallax-like fixed attachment or just cover */}
                 <div style={{
@@ -131,19 +131,21 @@ const Home = () => {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
+                        className="mobile-stack"
                         style={{
                             backgroundColor: 'white',
-                            borderRadius: '100px', // Pill shape outer
+                            borderRadius: window.innerWidth > 768 ? '100px' : '20px',
                             padding: '10px',
                             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                             display: 'flex',
                             alignItems: 'center',
                             maxWidth: '1500px',
-                            margin: '0 auto'
+                            margin: '0 auto',
+                            gap: '10px'
                         }}
                     >
                         {/* Input Group 1 */}
-                        <div style={{ flex: 1, padding: '0 1.5rem', borderRight: '1px solid #eee', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                        <div style={{ flex: 1, padding: '1rem 1.5rem', borderRight: window.innerWidth > 768 ? '1px solid #eee' : 'none', borderBottom: window.innerWidth <= 768 ? '1px solid #eee' : 'none', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
                             <label style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Location</label>
                             <div style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
                                 <select style={{
@@ -169,7 +171,7 @@ const Home = () => {
                         </div>
 
                         {/* Input Group 2 */}
-                        <div style={{ flex: 1, padding: '0 1.5rem', borderRight: '1px solid #eee', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                        <div style={{ flex: 1, padding: '1rem 1.5rem', borderRight: window.innerWidth > 768 ? '1px solid #eee' : 'none', borderBottom: window.innerWidth <= 768 ? '1px solid #eee' : 'none', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
                             <label style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Property Type</label>
                             <div style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
                                 <select style={{
@@ -195,7 +197,7 @@ const Home = () => {
                         </div>
 
                         {/* Input Group 3 */}
-                        <div style={{ flex: 1.2, padding: '0 1.5rem', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+                        <div style={{ flex: 1.2, padding: '1rem 1.5rem', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
                             <label style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Price Range</label>
                             <div style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
                                 <select style={{
@@ -216,7 +218,7 @@ const Home = () => {
                                     <option value="high">GH₵ 50,000 - 500,000</option>
                                     <option value="luxury">GH₵ 500,000+</option>
                                 </select>
-                                <ChevronDown size={16} color="#999" style={{ position: 'absolute', right: '-20px', pointerEvents: 'none' }} />
+                                <ChevronDown size={16} color="#999" style={{ position: 'absolute', right: 0, pointerEvents: 'none' }} />
                             </div>
                         </div>
 
@@ -232,8 +234,10 @@ const Home = () => {
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             gap: '0.5rem',
                             height: '54px', // Match height visually
+                            width: window.innerWidth <= 768 ? '100%' : 'auto',
                             boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.3)',
                             transition: 'all 0.3s'
                         }}
@@ -250,6 +254,7 @@ const Home = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.6 }}
+                        className="mobile-hide"
                         style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center', gap: '2rem', color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', fontWeight: '500' }}
                     >
                         <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><CheckCircle size={16} color="var(--success)" /> 1000+ New Listings</span>
@@ -265,7 +270,8 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, margin: "-100px" }}
-                style={{ padding: '8rem 0', backgroundColor: '#fff' }}
+                className="section-padding"
+                style={{ backgroundColor: '#fff' }}
             >
                 <div className="container">
                     <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
@@ -286,7 +292,7 @@ const Home = () => {
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
                         gap: '2rem'
-                    }}>
+                    }} className="grid-cols-1-mobile">
                         {[
                             { icon: <Building size={28} />, title: 'Apartments', count: '230+ Properties' },
                             { icon: <HomeIcon size={28} />, title: 'Modern Houses', count: '140+ Properties' },
@@ -345,7 +351,8 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, margin: "-100px" }}
-                style={{ padding: '8rem 0', backgroundColor: '#f9f9f9' }}
+                className="section-padding"
+                style={{ backgroundColor: '#f9f9f9' }}
             >
                 <div className="container">
                     {/* Centered Header */}
@@ -380,9 +387,9 @@ const Home = () => {
 
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
-                        gap: '2.5rem'
-                    }}>
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                        gap: '2rem'
+                    }} className="grid-cols-1-mobile">
                         {properties.map((property) => (
                             <PropertyCard key={property.id} property={property} />
                         ))}
@@ -402,15 +409,16 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, margin: "-100px" }}
-                style={{ padding: '6rem 0', backgroundColor: '#111827', color: 'white' }}
+                className="section-padding"
+                style={{ backgroundColor: '#111827', color: 'white' }}
             >
                 <div className="container">
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                        gap: '2rem',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '1.5rem',
                         textAlign: 'center'
-                    }}>
+                    }} className="grid-cols-1-mobile">
                         {[
                             { icon: <HomeIcon size={32} color="white" />, to: 2500, label: 'Properties Sold' },
                             { icon: <Users size={32} color="white" />, to: 850, label: 'Happy Clients' },
@@ -456,7 +464,8 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, margin: "-100px" }}
-                style={{ padding: '8rem 0', backgroundColor: '#fff' }}
+                className="section-padding"
+                style={{ backgroundColor: '#fff' }}
             >
                 <div className="container">
                     <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
@@ -490,9 +499,9 @@ const Home = () => {
 
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                        gap: '2rem'
-                    }}>
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                        gap: '1.5rem'
+                    }} className="grid-cols-1-mobile">
                         {[
                             { name: 'Spintex', count: '24 Properties', image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=2670&auto=format&fit=crop' },
                             { name: 'Oyarifa', count: '12 Properties', image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop' },
@@ -555,7 +564,8 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, margin: "-100px" }}
-                style={{ padding: '8rem 0', backgroundColor: '#fff' }}
+                className="section-padding"
+                style={{ backgroundColor: '#fff' }}
             >
                 <div className="container">
                     <div className="container">
@@ -590,9 +600,9 @@ const Home = () => {
 
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                            gap: '2.5rem'
-                        }}>
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                            gap: '2rem'
+                        }} className="grid-cols-1-mobile">
                             {[
                                 { title: 'Buy a Property', desc: 'Find your dream home with our advanced search tools and expert guidance.', icon: <HomeIcon size={40} color="var(--accent)" /> },
                                 { title: 'Sell a Property', desc: 'Get the best price for your property with our strategic marketing and negotiation.', icon: <Store size={40} color="var(--accent)" /> },
@@ -637,7 +647,8 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, margin: "-100px" }}
-                style={{ padding: '8rem 0', backgroundColor: '#f9fafb' }}
+                className="section-padding"
+                style={{ backgroundColor: '#f9fafb' }}
             >
                 <div className="container">
                     <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
@@ -671,10 +682,10 @@ const Home = () => {
 
                     <div style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-                        gap: '2.5rem',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '2rem',
                         marginBottom: '4rem'
-                    }}>
+                    }} className="grid-cols-1-mobile">
                         {[
                             {
                                 category: "Buying Tips",
@@ -695,7 +706,7 @@ const Home = () => {
                                 title: "The Rise of Smart Homes: Trends",
                                 date: "May 15, 2023",
                                 desc: "Explore the latest smart home technologies that are transforming the way we live and interact.",
-                                image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop"
+                                image: "https://images.unsplash.com/photo-1558002038-1055907df8d7?q=80&w=2670&auto=format&fit=crop"
                             }
                         ].map((post, index) => (
                             <motion.div
@@ -793,22 +804,23 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, margin: "-100px" }}
-                style={{ padding: '6rem 0', backgroundColor: '#2563eb', color: 'white', position: 'relative', overflow: 'hidden' }}
+                className="section-padding"
+                style={{ backgroundColor: '#2563eb', color: 'white', position: 'relative', overflow: 'hidden' }}
             >
                 <div className="container">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'center' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem', alignItems: 'center' }}>
 
                         {/* Left Side - Content */}
                         <div>
                             <h2 style={{
-                                fontSize: '3.5rem',
+                                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
                                 marginBottom: '1.5rem',
                                 fontFamily: 'var(--font-heading)',
                                 fontWeight: '800',
                                 lineHeight: 1.1,
                                 textTransform: 'capitalize'
                             }}>
-                                Ready to find your <br />
+                                Ready to find your <br className="mobile-hide" />
                                 <span style={{ color: '#93c5fd' }}>dream home?</span>
                             </h2>
                             <p style={{ fontSize: '1.25rem', marginBottom: '2.5rem', opacity: 0.9, lineHeight: 1.6, maxWidth: '500px' }}>
@@ -836,7 +848,7 @@ const Home = () => {
                         </div>
 
                         {/* Right Side - Image */}
-                        <div style={{ position: 'relative' }}>
+                        <div style={{ position: 'relative' }} className="mobile-hide">
                             <div style={{
                                 position: 'absolute',
                                 top: '20px',

@@ -40,15 +40,19 @@ const About = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <section style={{
-                padding: '12rem 0 8rem',
-                backgroundColor: 'var(--primary)',
-                backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=2670&auto=format&fit=crop")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                color: 'white',
-                textAlign: 'center'
-            }}>
+            <section
+                className="section-padding"
+                style={{
+                    paddingTop: 'clamp(10rem, 13vw, 12rem)',
+                    paddingBottom: 'clamp(4rem, 8vw, 6rem)',
+                    backgroundColor: 'var(--primary)',
+                    backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=2670&auto=format&fit=crop")',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    color: 'white',
+                    textAlign: 'center'
+                }}
+            >
                 <div className="container">
                     <motion.span
                         initial={{ opacity: 0, y: 20 }}
@@ -61,9 +65,9 @@ const About = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        style={{ fontSize: '4rem', fontWeight: '800', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}
+                        style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: '800', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}
                     >
-                        Redefining Living Spaces <br /> in Ghana
+                        Redefining Living Spaces <br className="mobile-hide" /> in Ghana
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -77,8 +81,8 @@ const About = () => {
             </section>
 
             {/* Our Mission & Vision */}
-            <section style={{ padding: '8rem 0' }}>
-                <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'center' }}>
+            <section className="section-padding">
+                <div className="container grid-cols-1-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -96,7 +100,7 @@ const About = () => {
                         viewport={{ once: true }}
                     >
                         <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>WHO WE ARE</span>
-                        <h2 style={{ fontSize: '2.5rem', color: 'var(--primary)', margin: '1rem 0 1.5rem', fontWeight: '800', fontFamily: 'var(--font-heading)' }}>
+                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)', color: 'var(--primary)', margin: '1rem 0 1.5rem', fontWeight: '800', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
                             We Build Memories, Not Just Houses
                         </h2>
                         <p style={{ color: 'var(--text-light)', fontSize: '1.1rem', lineHeight: 1.8, marginBottom: '2rem' }}>
@@ -115,9 +119,9 @@ const About = () => {
             </section>
 
             {/* Stats Section */}
-            <section style={{ padding: '6rem 0', backgroundColor: 'var(--primary)', color: 'white' }}>
+            <section className="section-padding" style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
                 <div className="container">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '2.5rem' }} className="grid-cols-1-mobile">
                         {stats.map((stat, idx) => (
                             <div key={idx} style={{ textAlign: 'center' }}>
                                 <div style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{stat.icon}</div>
@@ -130,13 +134,13 @@ const About = () => {
             </section>
 
             {/* Our Team */}
-            <section style={{ padding: '8rem 0' }}>
+            <section className="section-padding">
                 <div className="container">
                     <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                         <span style={{ color: 'var(--accent)', fontWeight: '700', letterSpacing: '1px' }}>OUR EXPERTS</span>
-                        <h2 style={{ fontSize: '3rem', color: 'var(--primary)', fontWeight: '800', fontFamily: 'var(--font-heading)', marginTop: '0.5rem' }}>Meet Our Team</h2>
+                        <h2 style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', color: 'var(--primary)', fontWeight: '800', fontFamily: 'var(--font-heading)', marginTop: '0.5rem', lineHeight: 1.1 }}>Meet Our Team</h2>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2.5rem' }} className="grid-cols-1-mobile">
                         {team.map((member, idx) => (
                             <motion.div
                                 key={idx}

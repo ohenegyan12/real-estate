@@ -131,3 +131,37 @@ button {
 ::-webkit-scrollbar-thumb:hover {
   background: #ccc;
 }
+
+/* Responsiveness Utilities */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  .mobile-show {
+    display: block !important;
+  }
+
+  .mobile-hide {
+    display: none !important;
+  }
+
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+
+  .section-padding {
+    padding: 4rem 0;
+  }
+
+
+  .grid-cols-1-mobile {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+}

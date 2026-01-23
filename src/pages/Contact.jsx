@@ -31,20 +31,24 @@ const Contact = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <section style={{
-                padding: '12rem 0 6rem',
-                backgroundColor: 'var(--primary)',
-                backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1423666639041-f56000c27a9a?q=80&w=2670&auto=format&fit=crop")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                color: 'white',
-                textAlign: 'center'
-            }}>
+            <section
+                className="section-padding"
+                style={{
+                    paddingTop: 'clamp(10rem, 13vw, 12rem)',
+                    paddingBottom: 'clamp(4rem, 8vw, 6rem)',
+                    backgroundColor: 'var(--primary)',
+                    backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1423666639041-f56000c27a9a?q=80&w=2670&auto=format&fit=crop")',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    color: 'white',
+                    textAlign: 'center'
+                }}
+            >
                 <div className="container">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        style={{ fontSize: '4rem', fontWeight: '800', marginBottom: '1rem', fontFamily: 'var(--font-heading)' }}
+                        style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: '800', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}
                     >
                         Get In Touch
                     </motion.h1>
@@ -59,10 +63,9 @@ const Contact = () => {
                 </div>
             </section>
 
-            {/* Contact Info Cards */}
             <section style={{ marginTop: '-4rem', position: 'relative', zIndex: 10 }}>
                 <div className="container">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }} className="grid-cols-1-mobile">
                         {contactInfo.map((info, idx) => (
                             <motion.div
                                 key={idx}
@@ -102,8 +105,8 @@ const Contact = () => {
             </section>
 
             {/* Form and Map */}
-            <section style={{ padding: '8rem 0' }}>
-                <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem' }}>
+            <section className="section-padding">
+                <div className="container grid-cols-1-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem' }}>
 
                     {/* Contact Form */}
                     <motion.div
@@ -111,7 +114,7 @@ const Contact = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>
+                        <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
                             Send Us a Message
                         </h2>
                         <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '2.5rem', lineHeight: 1.6 }}>
@@ -119,7 +122,7 @@ const Contact = () => {
                         </p>
 
                         <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 768 ? '1fr 1fr' : '1fr', gap: '1.5rem' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <label style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.9rem' }}>Full Name</label>
                                     <input type="text" placeholder="John Doe" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
@@ -149,7 +152,7 @@ const Contact = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                     >
-                        <div style={{ backgroundColor: 'white', padding: '3rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', height: '100%' }}>
+                        <div style={{ backgroundColor: 'white', padding: window.innerWidth > 768 ? '3rem' : '1.5rem', borderRadius: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', height: '100%' }}>
                             <h3 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '2rem' }}>Corporate Office</h3>
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>

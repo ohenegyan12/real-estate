@@ -171,20 +171,24 @@ const Properties = () => {
             <Navbar />
 
             {/* Sub-header / Hero */}
-            <section style={{
-                padding: '12rem 0 6rem',
-                backgroundColor: 'var(--primary)',
-                backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=2592&auto=format&fit=crop")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                color: 'white',
-                textAlign: 'center'
-            }}>
+            <section
+                className="section-padding"
+                style={{
+                    paddingTop: 'clamp(10rem, 13vw, 12rem)',
+                    paddingBottom: 'clamp(4rem, 8vw, 6rem)',
+                    backgroundColor: 'var(--primary)',
+                    backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=2592&auto=format&fit=crop")',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    color: 'white',
+                    textAlign: 'center'
+                }}
+            >
                 <div className="container">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        style={{ fontSize: '3.5rem', fontWeight: '800', marginBottom: '1rem', fontFamily: 'var(--font-heading)' }}
+                        style={{ fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', fontWeight: '800', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}
                     >
                         Find Your Perfect Property
                     </motion.h1>
@@ -218,11 +222,11 @@ const Properties = () => {
                     }}>
                         {/* Search & Top Filters */}
                         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                            <div style={{ flex: 1, minWidth: '300px', position: 'relative' }}>
+                            <div style={{ flex: 1, minWidth: window.innerWidth > 768 ? '300px' : '100%', position: 'relative' }}>
                                 <Search style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={20} />
                                 <input
                                     type="text"
-                                    placeholder="Search by location, title or property type..."
+                                    placeholder="Search properties..."
                                     style={{
                                         width: '100%',
                                         padding: '1.25rem 1.25rem 1.25rem 3.5rem',
@@ -242,6 +246,7 @@ const Properties = () => {
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
+                                    justifyContent: 'center',
                                     gap: '0.75rem',
                                     padding: '1.1rem 1.75rem',
                                     borderRadius: '16px',
@@ -250,15 +255,16 @@ const Properties = () => {
                                     color: filterOpen ? 'var(--accent)' : 'var(--primary)',
                                     fontWeight: '600',
                                     cursor: 'pointer',
-                                    transition: 'all 0.2s'
+                                    transition: 'all 0.2s',
+                                    flex: window.innerWidth <= 768 ? 1 : 'none'
                                 }}
                             >
                                 <SlidersHorizontal size={20} />
-                                Filters
+                                <span className="mobile-hide">Filters</span>
                                 <ChevronDown size={18} style={{ transform: filterOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
                             </button>
 
-                            <div style={{ display: 'flex', border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden' }}>
+                            <div style={{ display: 'flex', border: '1px solid #e2e8f0', borderRadius: '16px', overflow: 'hidden' }} className="mobile-hide">
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     style={{
@@ -285,7 +291,13 @@ const Properties = () => {
                                 </button>
                             </div>
 
-                            <button className="btn btn-primary" style={{ padding: '1.1rem 2rem', borderRadius: '16px', fontWeight: '700' }}>
+                            <button className="btn btn-primary" style={{
+                                padding: '1.1rem 2rem',
+                                borderRadius: '16px',
+                                fontWeight: '700',
+                                flex: window.innerWidth <= 768 ? '100%' : 'none',
+                                width: window.innerWidth <= 768 ? '100%' : 'auto'
+                            }}>
                                 Search
                             </button>
                         </div>
@@ -305,7 +317,7 @@ const Properties = () => {
                                         gap: '1.5rem',
                                         paddingTop: '1.5rem',
                                         borderTop: '1px solid #f1f5f9'
-                                    }}>
+                                    }} className="grid-cols-1-mobile">
                                         <div>
                                             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '0.9rem', color: '#64748b' }}>Property Type</label>
                                             <div style={{ position: 'relative' }}>
@@ -380,17 +392,17 @@ const Properties = () => {
             <section style={{ padding: '2rem 0 8rem' }}>
                 <div className="container">
                     {/* Results Header */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', gap: '1rem' }} className="mobile-stack">
                         <div>
                             <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--primary)' }}>
-                                {filteredProperties.length} Properties Found
+                                {filteredProperties.length} Properties <span className="mobile-hide">Found</span>
                             </h2>
-                            <p style={{ color: '#64748b' }}>Showing properties in all locations</p>
+                            <p style={{ color: '#64748b' }}>Showing all listings</p>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <span style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '600' }}>Sort By:</span>
-                            <div style={{ position: 'relative' }}>
-                                <select style={{ padding: '0.65rem 2.5rem 0.65rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', appearance: 'none', backgroundColor: 'white', fontWeight: '600' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: window.innerWidth <= 768 ? '100%' : 'auto' }}>
+                            <span style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '600', whiteSpace: 'nowrap' }}>Sort By:</span>
+                            <div style={{ position: 'relative', flex: 1 }}>
+                                <select style={{ width: '100%', padding: '0.65rem 2.5rem 0.65rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', appearance: 'none', backgroundColor: 'white', fontWeight: '600' }}>
                                     <option>Newest First</option>
                                     <option>Price (Low to High)</option>
                                     <option>Price (High to Low)</option>
@@ -406,9 +418,10 @@ const Properties = () => {
                         layout
                         style={{
                             display: 'grid',
-                            gridTemplateColumns: viewMode === 'grid' ? 'repeat(auto-fill, minmax(360px, 1fr))' : '1fr',
-                            gap: '2.5rem'
+                            gridTemplateColumns: viewMode === 'grid' ? 'repeat(auto-fill, minmax(300px, 1fr))' : '1fr',
+                            gap: '2rem'
                         }}
+                        className="grid-cols-1-mobile"
                     >
                         {filteredProperties.map((property) => (
                             <PropertyCard key={property.id} property={property} />

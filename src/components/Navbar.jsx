@@ -39,7 +39,7 @@ const Navbar = () => {
                     fontSize: '0.85rem',
                     backdropFilter: 'blur(4px)',
                     borderBottom: '1px solid rgba(255,255,255,0.1)'
-                }}>
+                }} className="mobile-hide">
                     <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -80,7 +80,7 @@ const Navbar = () => {
                         </Link>
 
                         {/* Desktop Menu */}
-                        <div className="desktop-menu" style={{ display: window.innerWidth > 768 ? 'flex' : 'none', alignItems: 'center', gap: '2.5rem' }}>
+                        <div className="desktop-menu" style={{ alignItems: 'center', gap: '2.5rem' }}>
                             {['Home', 'Properties', 'About', 'Blog', 'Contact'].map((item) => (
                                 <Link
                                     key={item}
@@ -96,16 +96,14 @@ const Navbar = () => {
                             ))}
                         </div>
 
-                        {/* Mobile Menu Toggle */}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             style={{
-                                display: 'none',
                                 color: scrolled ? 'var(--primary)' : 'white'
                             }}
                             className="mobile-toggle"
                         >
-                            {isOpen ? <X /> : <Menu />}
+                            {isOpen ? <X size={28} /> : <Menu size={28} />}
                         </button>
                     </div>
                 </div>
@@ -146,6 +144,8 @@ const Navbar = () => {
                     </div>
                 )}
                 <style>{`
+          .desktop-menu { display: flex; }
+          .mobile-toggle { display: none; }
           @media (max-width: 768px) {
             .desktop-menu { display: none !important; }
             .mobile-toggle { display: block !important; }

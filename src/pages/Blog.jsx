@@ -60,7 +60,7 @@ const Blog = () => {
             author: "Esi Amankwah",
             comments: 10,
             desc: "Discover why Cantonments remains the most sought-after neighborhood for expats and luxury home buyers.",
-            image: "https://images.unsplash.com/photo-1590066877791-47c0e47af336?q=80&w=2670&auto=format&fit=crop"
+            image: "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?q=80&w=2572&auto=format&fit=crop"
         }
     ];
 
@@ -69,20 +69,24 @@ const Blog = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <section style={{
-                padding: '12rem 0 6rem',
-                backgroundColor: 'var(--primary)',
-                backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2670&auto=format&fit=crop")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                color: 'white',
-                textAlign: 'center'
-            }}>
+            <section
+                className="section-padding"
+                style={{
+                    paddingTop: 'clamp(10rem, 13vw, 12rem)',
+                    paddingBottom: 'clamp(4rem, 8vw, 6rem)',
+                    backgroundColor: 'var(--primary)',
+                    backgroundImage: 'linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.8)), url("https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2670&auto=format&fit=crop")',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    color: 'white',
+                    textAlign: 'center'
+                }}
+            >
                 <div className="container">
                     <motion.h1
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        style={{ fontSize: '3.5rem', fontWeight: '800', marginBottom: '1rem', fontFamily: 'var(--font-heading)' }}
+                        style={{ fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', fontWeight: '800', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.1 }}
                     >
                         Our Blog & Insights
                     </motion.h1>
@@ -98,8 +102,8 @@ const Blog = () => {
             </section>
 
             {/* Blog Content */}
-            <section style={{ padding: '5rem 0 8rem' }}>
-                <div className="container" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem' }}>
+            <section className="section-padding">
+                <div className="container mobile-stack" style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 992 ? '2fr 1fr' : '1fr', gap: '3rem' }}>
 
                     {/* Posts Grid */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100%, 1fr))', gap: '3rem' }}>
@@ -119,7 +123,7 @@ const Blog = () => {
                                     flexDirection: 'column'
                                 }}
                             >
-                                <div style={{ height: '350px', overflow: 'hidden', position: 'relative' }}>
+                                <div style={{ height: window.innerWidth > 768 ? '350px' : '240px', overflow: 'hidden', position: 'relative' }}>
                                     <img
                                         src={post.image}
                                         alt={post.title}
@@ -129,16 +133,16 @@ const Blog = () => {
                                         {post.category}
                                     </div>
                                 </div>
-                                <div style={{ padding: '2.5rem' }}>
-                                    <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', color: '#64748b', fontSize: '0.9rem' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Calendar size={16} /> {post.date}</div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><User size={16} /> By {post.author}</div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><MessageSquare size={16} /> {post.comments} Comments</div>
+                                <div style={{ padding: window.innerWidth > 768 ? '2.5rem' : '1.5rem' }}>
+                                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.25rem', color: '#64748b', fontSize: '0.85rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Calendar size={14} /> {post.date}</div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><User size={14} /> By {post.author}</div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }} className="mobile-hide"><MessageSquare size={14} /> {post.comments} Comments</div>
                                     </div>
-                                    <h2 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.3 }}>
+                                    <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: '800', color: 'var(--primary)', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.3 }}>
                                         {post.title}
                                     </h2>
-                                    <p style={{ color: 'var(--text-light)', lineHeight: 1.8, fontSize: '1.1rem', marginBottom: '2rem' }}>
+                                    <p style={{ color: 'var(--text-light)', lineHeight: 1.7, fontSize: '1rem', marginBottom: '2rem' }}>
                                         {post.desc}
                                     </p>
                                     <button style={{
