@@ -416,12 +416,12 @@ const Properties = () => {
                     {/* Properties Grid */}
                     <motion.div
                         layout
+                        className={viewMode === 'grid' ? "grid-3" : ""}
                         style={{
-                            display: 'grid',
-                            gridTemplateColumns: viewMode === 'grid' ? 'repeat(auto-fill, minmax(300px, 1fr))' : '1fr',
+                            display: viewMode === 'grid' ? 'grid' : 'flex',
+                            flexDirection: viewMode === 'grid' ? 'unset' : 'column',
                             gap: '2rem'
                         }}
-                        className="grid-cols-1-mobile"
                     >
                         {filteredProperties.map((property) => (
                             <PropertyCard key={property.id} property={property} />

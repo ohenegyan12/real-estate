@@ -12,29 +12,6 @@ const About = () => {
         { label: 'Awards Won', value: '25+', icon: <Target size={24} /> },
     ];
 
-    const team = [
-        {
-            name: "Kwame Mensah",
-            role: "Founder & CEO",
-            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop"
-        },
-        {
-            name: "Ama Serwaa",
-            role: "Head of Real Estate",
-            image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop"
-        },
-        {
-            name: "Kofi Boateng",
-            role: "Senior Property Consultant",
-            image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2570&auto=format&fit=crop"
-        },
-        {
-            name: "Esi Amankwah",
-            role: "Customer Relations",
-            image: "https://images.unsplash.com/photo-1567532939103-c053bb14b2b9?q=80&w=2574&auto=format&fit=crop"
-        }
-    ];
-
     return (
         <div style={{ backgroundColor: '#f8fafc' }}>
             <Navbar />
@@ -75,14 +52,14 @@ const About = () => {
                         transition={{ delay: 0.2 }}
                         style={{ fontSize: '1.25rem', opacity: 0.9, maxWidth: '700px', margin: '0 auto', lineHeight: 1.6 }}
                     >
-                        We are more than just a real estate company. We are a team of dedicated professionals committed to helping you find the place you'll call home.
+                        We are more than just a real estate company. We are dedicated professionals committed to helping you find the place you'll call home.
                     </motion.p>
                 </div>
             </section>
 
             {/* Our Mission & Vision */}
-            <section className="section-padding">
-                <div className="container grid-cols-1-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
+            <section style={{ padding: '10rem 0' }}>
+                <div className="container grid-cols-1-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '6rem', alignItems: 'center' }}>
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -90,7 +67,7 @@ const About = () => {
                     >
                         <img
                             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2500&auto=format&fit=crop"
-                            alt="About Us"
+                            alt="About Owusu Homes"
                             style={{ width: '100%', borderRadius: '32px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.2)' }}
                         />
                     </motion.div>
@@ -104,7 +81,10 @@ const About = () => {
                             We Build Memories, Not Just Houses
                         </h2>
                         <p style={{ color: 'var(--text-light)', fontSize: '1.1rem', lineHeight: 1.8, marginBottom: '2rem' }}>
-                            Founded in 2010, Elite Living has grown from a small consultancy to one of Ghana's leading luxury real estate firms. Our journey began with a simple mission: to make premium living accessible and transparent.
+                            Founded in 2010, Owusu Homes has grown from a small consultancy to one of Ghana's leading luxury real estate firms. Our journey began with a simple mission: to make premium living accessible and transparent.
+                        </p>
+                        <p style={{ color: 'var(--text-light)', fontSize: '1.1rem', lineHeight: 1.8, marginBottom: '2.5rem' }}>
+                            We pride ourselves on our deep understanding of the local market and our ability to deliver tailored solutions that meet the unique needs of every client. Whether you are buying, selling, or renting, we are here to guide you every step of the way.
                         </p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {['Integrity in every transaction', 'Commitment to excellence', 'Customer-centric approach'].map((item, idx) => (
@@ -119,48 +99,56 @@ const About = () => {
             </section>
 
             {/* Stats Section */}
-            <section className="section-padding" style={{ backgroundColor: 'var(--primary)', color: 'white' }}>
+            {/* Stats Section */}
+            <section style={{ backgroundColor: 'var(--primary)', color: 'white', padding: '10rem 0' }}>
                 <div className="container">
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '2.5rem' }} className="grid-cols-1-mobile">
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '4rem',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }} className="grid-cols-1-mobile">
                         {stats.map((stat, idx) => (
                             <div key={idx} style={{ textAlign: 'center' }}>
-                                <div style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{stat.icon}</div>
-                                <div style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '0.5rem' }}>{stat.value}</div>
-                                <div style={{ opacity: 0.8, fontSize: '1rem' }}>{stat.label}</div>
+                                <div style={{ color: 'var(--accent)', marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>{stat.icon}</div>
+                                <div style={{ fontSize: '3.5rem', fontWeight: '800', marginBottom: '0.5rem', lineHeight: 1 }}>{stat.value}</div>
+                                <div style={{ opacity: 0.8, fontSize: '1.1rem', fontWeight: '500' }}>{stat.label}</div>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Our Team */}
-            <section className="section-padding">
+            {/* Why Choose Us */}
+            <section style={{ padding: '10rem 0' }}>
                 <div className="container">
-                    <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                        <span style={{ color: 'var(--accent)', fontWeight: '700', letterSpacing: '1px' }}>OUR EXPERTS</span>
-                        <h2 style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', color: 'var(--primary)', fontWeight: '800', fontFamily: 'var(--font-heading)', marginTop: '0.5rem', lineHeight: 1.1 }}>Meet Our Team</h2>
+                    <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
+                        <span style={{ color: 'var(--accent)', fontWeight: '700', letterSpacing: '1px' }}>WHY CHOOSE US</span>
+                        <h2 style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', color: 'var(--primary)', fontWeight: '800', fontFamily: 'var(--font-heading)', marginTop: '0.5rem', lineHeight: 1.1 }}>
+                            The Owusu Homes Difference
+                        </h2>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2.5rem' }} className="grid-cols-1-mobile">
-                        {team.map((member, idx) => (
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem' }}>
+                        {[
+                            { title: 'Local Expertise', description: 'Deep knowledge of Accra and surrounding prime real estate markets.' },
+                            { title: 'Transparent Process', description: 'We believe in full transparency, keeping you informed at every stage.' },
+                            { title: 'Premium Listings', description: 'Curated selection of high-quality properties in desirable locations.' }
+                        ].map((item, i) => (
                             <motion.div
-                                key={idx}
+                                key={i}
                                 whileHover={{ y: -10 }}
                                 style={{
+                                    padding: '3rem',
                                     backgroundColor: 'white',
                                     borderRadius: '24px',
-                                    overflow: 'hidden',
-                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-                                    textAlign: 'center',
-                                    paddingBottom: '2rem'
+                                    boxShadow: '0 10px 30px -10px rgba(0,0,0,0.05)',
+                                    border: '1px solid #f1f5f9'
                                 }}
                             >
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    style={{ width: '100%', height: '300px', objectFit: 'cover', marginBottom: '1.5rem' }}
-                                />
-                                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '0.25rem' }}>{member.name}</h3>
-                                <p style={{ color: 'var(--accent)', fontWeight: '600', fontSize: '0.9rem' }}>{member.role}</p>
+                                <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '1rem' }}>{item.title}</h3>
+                                <p style={{ color: 'var(--text-light)', lineHeight: 1.6, fontSize: '1.1rem' }}>{item.description}</p>
                             </motion.div>
                         ))}
                     </div>

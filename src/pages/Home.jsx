@@ -92,37 +92,41 @@ const Home = () => {
                     zIndex: -1
                 }} />
 
-                <div className="container" style={{ textAlign: 'center', maxWidth: '1100px', zIndex: 1, paddingTop: '100px' }}>
+                <div className="container" style={{ textAlign: 'center', maxWidth: '1200px', zIndex: 1, paddingTop: '60px' }}>
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        transition={{ duration: 1, ease: "easeOut" }}
                     >
                         <h1 style={{
-                            fontSize: 'clamp(3.5rem, 6vw, 5.5rem)',
-                            marginBottom: '1.5rem',
-                            fontWeight: '800',
-                            letterSpacing: '-2px',
-                            lineHeight: 1.05,
-                            textShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                            fontSize: 'clamp(3.5rem, 8vw, 6.5rem)',
+                            marginBottom: '2rem',
+                            fontWeight: '900',
+                            letterSpacing: '-3px',
+                            lineHeight: 1,
+                            textShadow: '0 10px 30px rgba(0,0,0,0.2)'
                         }}>
                             Discover Your <br />
                             <span style={{
                                 color: 'transparent',
                                 WebkitBackgroundClip: 'text',
-                                backgroundImage: 'linear-gradient(to right, #fff, #bfdbfe)'
+                                backgroundImage: 'linear-gradient(to right, #ffffff, #93c5fd)',
+                                display: 'inline-block'
                             }}>
-                                Dream Home
+                                Dream Sanctuary
                             </span>
                         </h1>
                         <p style={{
-                            fontSize: '1.25rem',
-                            maxWidth: '600px',
-                            margin: '0 auto 3rem auto',
-                            opacity: 0.9,
-                            fontWeight: '300'
+                            fontSize: '1.4rem',
+                            maxWidth: '750px',
+                            margin: '0 auto 4rem auto',
+                            opacity: 0.95,
+                            fontWeight: '400',
+                            lineHeight: 1.6,
+                            color: 'white'
                         }}>
-                            Discover exclusive properties in prime locations with our curated real estate marketplace.
+                            Exclusive properties in Ghana's most prestigious locations. <br className="mobile-hide" />
+                            Curated for those who demand excellence.
                         </p>
                     </motion.div>
 
@@ -131,34 +135,13 @@ const Home = () => {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="mobile-stack"
-                        style={{
-                            backgroundColor: 'white',
-                            borderRadius: window.innerWidth > 768 ? '100px' : '20px',
-                            padding: '10px',
-                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            maxWidth: '1500px',
-                            margin: '0 auto',
-                            gap: '10px'
-                        }}
+                        className="hero-search-container"
                     >
                         {/* Input Group 1 */}
-                        <div style={{ flex: 1, padding: '1rem 1.5rem', borderRight: window.innerWidth > 768 ? '1px solid #eee' : 'none', borderBottom: window.innerWidth <= 768 ? '1px solid #eee' : 'none', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
-                            <label style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Location</label>
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
-                                <select style={{
-                                    width: '100%',
-                                    border: 'none',
-                                    outline: 'none',
-                                    color: '#666',
-                                    fontSize: '0.95rem',
-                                    fontWeight: '500',
-                                    backgroundColor: 'transparent',
-                                    appearance: 'none',
-                                    cursor: 'pointer'
-                                }}>
+                        <div className="search-group">
+                            <label className="search-label">Location</label>
+                            <div className="search-input-wrapper">
+                                <select className="search-select">
                                     <option value="" disabled selected>Select City</option>
                                     <option value="Accra">Accra</option>
                                     <option value="Kumasi">Kumasi</option>
@@ -166,25 +149,15 @@ const Home = () => {
                                     <option value="Tema">Tema</option>
                                     <option value="Cape Coast">Cape Coast</option>
                                 </select>
-                                <ChevronDown size={16} color="#999" style={{ position: 'absolute', right: 0, pointerEvents: 'none' }} />
+                                <ChevronDown size={16} color="#999" className="select-icon" />
                             </div>
                         </div>
 
                         {/* Input Group 2 */}
-                        <div style={{ flex: 1, padding: '1rem 1.5rem', borderRight: window.innerWidth > 768 ? '1px solid #eee' : 'none', borderBottom: window.innerWidth <= 768 ? '1px solid #eee' : 'none', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
-                            <label style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Property Type</label>
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
-                                <select style={{
-                                    width: '100%',
-                                    border: 'none',
-                                    outline: 'none',
-                                    color: '#666',
-                                    fontSize: '0.95rem',
-                                    fontWeight: '500',
-                                    backgroundColor: 'transparent',
-                                    appearance: 'none',
-                                    cursor: 'pointer'
-                                }}>
+                        <div className="search-group">
+                            <label className="search-label">Property Type</label>
+                            <div className="search-input-wrapper">
+                                <select className="search-select">
                                     <option value="" disabled selected>Property Type</option>
                                     <option value="Apartment">Apartment</option>
                                     <option value="House">House</option>
@@ -192,60 +165,30 @@ const Home = () => {
                                     <option value="Office">Office</option>
                                     <option value="Commercial">Commercial</option>
                                 </select>
-                                <ChevronDown size={16} color="#999" style={{ position: 'absolute', right: 0, pointerEvents: 'none' }} />
+                                <ChevronDown size={16} color="#999" className="select-icon" />
                             </div>
                         </div>
 
                         {/* Input Group 3 */}
-                        <div style={{ flex: 1.2, padding: '1rem 1.5rem', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
-                            <label style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '5px', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Price Range</label>
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
-                                <select style={{
-                                    width: '100%',
-                                    border: 'none',
-                                    outline: 'none',
-                                    color: '#666',
-                                    fontSize: '0.95rem',
-                                    fontWeight: '500',
-                                    backgroundColor: 'transparent',
-                                    appearance: 'none',
-                                    cursor: 'pointer'
-                                }}>
-                                    <option value="" disabled selected>Budge</option>
+                        <div className="search-group no-border">
+                            <label className="search-label">Price Range</label>
+                            <div className="search-input-wrapper">
+                                <select className="search-select">
+                                    <option value="" disabled selected>Budget</option>
                                     <option value="Any">Any Price</option>
                                     <option value="low">GH₵ 1,000 - 5,000</option>
                                     <option value="medium">GH₵ 5,000 - 50,000</option>
                                     <option value="high">GH₵ 50,000 - 500,000</option>
                                     <option value="luxury">GH₵ 500,000+</option>
                                 </select>
-                                <ChevronDown size={16} color="#999" style={{ position: 'absolute', right: 0, pointerEvents: 'none' }} />
+                                <ChevronDown size={16} color="#999" className="select-icon" />
                             </div>
                         </div>
 
                         {/* Search Button */}
-                        <button style={{
-                            backgroundColor: 'var(--accent)',
-                            color: 'white',
-                            borderRadius: '50px',
-                            padding: '1rem 2rem',
-                            fontSize: '1rem',
-                            fontWeight: '600',
-                            border: 'none',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            height: '54px', // Match height visually
-                            width: window.innerWidth <= 768 ? '100%' : 'auto',
-                            boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.3)',
-                            transition: 'all 0.3s'
-                        }}
-                            onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(37, 99, 235, 0.4)'; }}
-                            onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(37, 99, 235, 0.3)'; }}
-                        >
+                        <button className="search-btn">
                             <Search size={20} />
-                            Search
+                            <span>Search</span>
                         </button>
                     </motion.div>
 
@@ -288,14 +231,11 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                        gap: '2rem'
-                    }} className="grid-cols-1-mobile">
+                    <div className="grid-3">
                         {[
                             { icon: <Building size={28} />, title: 'Apartments', count: '230+ Properties' },
                             { icon: <HomeIcon size={28} />, title: 'Modern Houses', count: '140+ Properties' },
+                            { icon: <Building2 size={28} />, title: 'Villas', count: '85+ Properties' },
                         ].map((category, index) => (
                             <motion.div
                                 key={index}
@@ -385,11 +325,7 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                        gap: '2rem'
-                    }} className="grid-cols-1-mobile">
+                    <div className="grid-3">
                         {properties.map((property) => (
                             <PropertyCard key={property.id} property={property} />
                         ))}
@@ -680,12 +616,7 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                        gap: '2rem',
-                        marginBottom: '4rem'
-                    }} className="grid-cols-1-mobile">
+                    <div className="grid-3" style={{ marginBottom: '4rem' }}>
                         {[
                             {
                                 category: "Buying Tips",
@@ -706,7 +637,7 @@ const Home = () => {
                                 title: "The Rise of Smart Homes: Trends",
                                 date: "May 15, 2023",
                                 desc: "Explore the latest smart home technologies that are transforming the way we live and interact.",
-                                image: "https://images.unsplash.com/photo-1558002038-1055907df8d7?q=80&w=2670&auto=format&fit=crop"
+                                image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop"
                             }
                         ].map((post, index) => (
                             <motion.div

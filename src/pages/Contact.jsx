@@ -9,19 +9,19 @@ const Contact = () => {
         {
             icon: <Phone size={24} />,
             title: "Phone Number",
-            details: ["+233 54 269 0596", "+233 24 123 4567"],
+            details: ["+233 55 336 4848", "+233 24 123 4567"],
             color: "#eff6ff"
         },
         {
             icon: <Mail size={24} />,
             title: "Email Address",
-            details: ["info@eliteliving.com", "support@eliteliving.com"],
+            details: ["owusuhomesgh@gmail.com", "support@owusuhomes.com"],
             color: "#fff7ed"
         },
         {
             icon: <MapPin size={24} />,
             title: "Office Location",
-            details: ["Spintex Road, Accra", "Ghana, West Africa"],
+            details: ["East Legon, Accra", "Ghana, West Africa"],
             color: "#f0fdf4"
         }
     ];

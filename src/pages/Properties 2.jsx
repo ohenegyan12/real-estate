@@ -265,10 +265,8 @@ const Properties = () => {
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '3rem' }}>
                     <div style={{ flex: '1 1 300px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', fontWeight: '800', marginBottom: '1.5rem', color: 'var(--accent)' }}>
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M3 21h18M5 21V7l8-4 8 4v14" />
-                            </svg>
-                            <span>Elite Living</span>
+                            <img src="/logo.jpeg" alt="Owusu Homes Logo" style={{ height: '32px', width: '32px', objectFit: 'cover', borderRadius: '50%' }} />
+                            <span>Owusu Homes</span>
                         </div>
                         <p style={{ color: '#aaa', lineHeight: 1.8 }}>
                             Your gateway to exceptional living. We connect you with the most desired real estate properties and investment opportunities.
@@ -290,20 +288,20 @@ const Properties = () => {
                         <ul style={{ listStyle: 'none', color: '#aaa', padding: 0 }}>
                             <li style={{ marginBottom: '1rem', display: 'flex', gap: '1rem' }}>
                                 <MapPin size={20} color="var(--accent)" />
-                                <span>Spintex Road, Accra, Ghana</span>
+                                <span>East Legon, Accra, Ghana</span>
                             </li>
                             <li style={{ marginBottom: '1rem', display: 'flex', gap: '1rem' }}>
                                 <Search size={20} color="var(--accent)" />
-                                <span>+233 54 269 0596</span>
+                                <span>+233 55 336 4848</span>
                             </li>
                             <li style={{ marginBottom: '1rem', display: 'flex', gap: '1rem' }}>
-                                <span>info@eliteliving.com</span>
+                                <span>owusuhomesgh@gmail.com</span>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <div className="container" style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '1px solid #333', textAlign: 'center', color: '#666' }}>
-                    &copy; {new Date().getFullYear()} Elite Living. All rights reserved.
+                    &copy; {new Date().getFullYear()} Owusu Homes. All rights reserved.
                 </div>
             </footer>
         </div>

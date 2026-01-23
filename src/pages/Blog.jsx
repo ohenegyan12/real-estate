@@ -103,10 +103,10 @@ const Blog = () => {
 
             {/* Blog Content */}
             <section className="section-padding">
-                <div className="container mobile-stack" style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 992 ? '2fr 1fr' : '1fr', gap: '3rem' }}>
+                <div className="container mobile-stack" style={{ display: 'grid', gridTemplateColumns: window.innerWidth > 992 ? '2fr 1fr' : '1fr', gap: '5rem', alignItems: 'start' }}>
 
                     {/* Posts Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100%, 1fr))', gap: '3rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2.5rem' }}>
                         {posts.map((post, idx) => (
                             <motion.article
                                 key={idx}
@@ -164,7 +164,7 @@ const Blog = () => {
                     </div>
 
                     {/* Sidebar */}
-                    <aside>
+                    <aside style={{ position: 'sticky', top: '120px' }}>
                         {/* Search */}
                         <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '24px', marginBottom: '2.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
                             <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem' }}>Search Blog</h3>

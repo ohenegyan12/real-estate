@@ -44,11 +44,11 @@ const Navbar = () => {
                         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <Phone size={14} />
-                                <span>0542690596</span>
+                                <span>0553364848</span>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <Mail size={14} />
-                                <span>info@eliteliving.com</span>
+                                <span>owusuhomesgh@gmail.com</span>
                             </div>
                         </div>
 
@@ -72,11 +72,8 @@ const Navbar = () => {
 
                         {/* Logo */}
                         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.8rem', fontWeight: '800', color: scrolled ? 'var(--primary)' : 'white' }}>
-                            {/* Simple SVG Logo Placeholder */}
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M3 21h18M5 21V7l8-4 8 4v14" />
-                            </svg>
-                            <span>Elite <span style={{ color: scrolled ? 'var(--primary)' : 'white' }}>Living</span></span>
+                            <img src="/logo.jpeg" alt="Owusu Homes Logo" style={{ height: '40px', width: '40px', objectFit: 'cover', borderRadius: '50%' }} />
+                            <span>Owusu <span style={{ color: scrolled ? 'var(--primary)' : 'white' }}>Homes</span></span>
                         </Link>
 
                         {/* Desktop Menu */}

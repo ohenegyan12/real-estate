@@ -48,8 +48,8 @@ const PropertyDetail = () => {
             name: "Kwame Mensah",
             role: "Senior Real Estate Consultant",
             image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop",
-            phone: "+233 24 123 4567",
-            email: "k.mensah@eliteliving.com"
+            phone: "+233 55 336 4848",
+            email: "owusuhomesgh@gmail.com"
         }
     };
 
@@ -309,7 +309,7 @@ const PropertyDetail = () => {
 
                             <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#10b981', backgroundColor: '#ecfdf5', padding: '1rem', borderRadius: '12px', fontSize: '0.9rem' }}>
                                 <ShieldCheck size={20} />
-                                <span style={{ fontWeight: '600' }}>Verified Elite Living Agent</span>
+                                <span style={{ fontWeight: '600' }}>Verified Owusu Homes Agent</span>
                             </div>
                         </div>
                     </div>
