@@ -134,7 +134,7 @@ const PropertyCard = ({ property }) => {
                         overflow: 'hidden',
                         height: '3.4rem'
                     }}>
-                        {property.title}
+                        {property.title || property.name}
                     </h3>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', marginBottom: '1.5rem', fontSize: '0.95rem' }}>

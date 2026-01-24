@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
+import { settingsService } from '../services/api';
 import { CheckCircle2, Award, Users, Target, Rocket } from 'lucide-react';
 
 const About = () => {
+    const [settings, setSettings] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const data = await settingsService.get();
+                setSettings(data);
+            } catch (error) {
+                console.error('Error fetching settings for about:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSettings();
+    }, []);
+
     const stats = [
-        { label: 'Properties Sold', value: '1.2K+', icon: <Award size={24} /> },
-        { label: 'Happy Clients', value: '4.8K+', icon: <Users size={24} /> },
-        { label: 'Market Experience', value: '15+', icon: <Rocket size={24} /> },
-        { label: 'Awards Won', value: '25+', icon: <Target size={24} /> },
+        { label: 'Years Experience', value: settings?.stats?.yearsExperience || '0', icon: <Rocket size={24} /> },
+        { label: 'Properties Listed', value: settings?.stats?.propertiesListed || '0', icon: <Award size={24} /> },
+        { label: 'Happy Clients', value: settings?.stats?.happyClients || '0', icon: <Users size={24} /> },
+        { label: 'Awards Won', value: settings?.stats?.awardsWon || '0', icon: <Target size={24} /> },
     ];
 
     return (

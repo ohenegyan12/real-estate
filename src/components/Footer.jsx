@@ -1,7 +1,22 @@
-import React from 'react';
-import { MapPin, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Search, Mail, Phone } from 'lucide-react';
+import { settingsService } from '../services/api';
 
 const Footer = () => {
+    const [settings, setSettings] = useState(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const data = await settingsService.get();
+                setSettings(data);
+            } catch (error) {
+                console.error('Error fetching settings for footer:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
+
     return (
         <footer style={{ backgroundColor: '#111', color: 'white', padding: '5rem 0' }}>
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '3rem' }}>
@@ -30,14 +45,15 @@ const Footer = () => {
                     <ul style={{ listStyle: 'none', color: '#aaa', padding: 0 }}>
                         <li style={{ marginBottom: '1rem', display: 'flex', gap: '1rem' }}>
                             <MapPin size={20} color="var(--accent)" />
-                            <span>East Legon, Accra, Ghana</span>
+                            <span>{settings?.contact?.address || 'East Legon, Accra, Ghana'}</span>
                         </li>
                         <li style={{ marginBottom: '1rem', display: 'flex', gap: '1rem' }}>
-                            <Search size={20} color="var(--accent)" />
-                            <span>+233 55 336 4848</span>
+                            <Phone size={20} color="var(--accent)" />
+                            <span>{settings?.contact?.phone || '+233 55 336 4848'}</span>
                         </li>
                         <li style={{ marginBottom: '1rem', display: 'flex', gap: '1rem' }}>
-                            <span>owusuhomesgh@gmail.com</span>
+                            <Mail size={20} color="var(--accent)" />
+                            <span>{settings?.contact?.email || 'owusuhomesgh@gmail.com'}</span>
                         </li>
                     </ul>
                 </div>

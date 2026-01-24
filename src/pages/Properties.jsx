@@ -1,170 +1,113 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PropertyCard from '../components/PropertyCard';
+import { propertyService } from '../services/api';
 import { Search, ChevronDown, Filter, LayoutGrid, List, SlidersHorizontal, MapPin, Home as HomeIcon, Bed, Bath, ArrowRight, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Properties = () => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const initialType = queryParams.get('type') || 'All';
+    const initialLocation = queryParams.get('location') || 'All';
+    const initialBudget = queryParams.get('budget') || 'All';
+
     const [viewMode, setViewMode] = useState('grid');
-    const [filterOpen, setFilterOpen] = useState(false);
+    const [filterOpen, setFilterOpen] = useState(initialType !== 'All' || initialLocation !== 'All' || initialBudget !== 'All');
+    const [loading, setLoading] = useState(true);
+    const [allProperties, setAllProperties] = useState([]);
+    const [locations, setLocations] = useState([]);
+    const [types, setTypes] = useState([]);
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const propertiesPerPage = 9;
 
     // Filters State
     const [filters, setFilters] = useState({
-        type: 'All',
+        type: initialType,
         status: 'All',
-        location: 'All',
-        priceRange: 'All',
+        location: initialLocation,
+        priceRange: initialBudget,
         beds: 'All'
     });
 
-    // Mock Data
-    const allProperties = [
-        {
-            id: 1,
-            title: "3 Bedroom House for Sale at East Legon Hills",
-            location: "East Legon Hills, Accra",
-            price: 3263000,
-            currency: "GH₵",
-            priceSub: "50% accepted GH₵1,631,500",
-            status: "For Sale",
-            type: "House",
-            isNew: true,
-            rating: 4.8,
-            beds: 3,
-            baths: 4,
-            sqft: 2500,
-            image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2671&auto=format&fit=crop"
-        },
-        {
-            id: 2,
-            title: "Luxury 3 Bedroom Apartment For Rent",
-            location: "Madina, Accra",
-            price: 7500,
-            currency: "GH₵",
-            status: "For Rent",
-            type: "Apartment",
-            isNew: true,
-            rating: 4.5,
-            beds: 3,
-            baths: 3,
-            sqft: 1800,
-            image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2670&auto=format&fit=crop"
-        },
-        {
-            id: 3,
-            title: "Modern 3 Bedroom Townhouse",
-            location: "Oyarifa, Accra",
-            price: 4500,
-            currency: "GH₵",
-            status: "For Rent",
-            type: "Townhouse",
-            isNew: false,
-            rating: 4.6,
-            beds: 3,
-            baths: 3,
-            sqft: 2000,
-            image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop"
-        },
-        {
-            id: 4,
-            title: "Executive 5 Bedroom Villa with Pool",
-            location: "Airport Residential, Accra",
-            price: 12500000,
-            currency: "GH₵",
-            status: "For Sale",
-            type: "Villa",
-            isNew: true,
-            rating: 4.9,
-            beds: 5,
-            baths: 6,
-            sqft: 5500,
-            image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2500&auto=format&fit=crop"
-        },
-        {
-            id: 5,
-            title: "Compact 2 Bedroom Suite",
-            location: "Cantonments, Accra",
-            price: 12000,
-            currency: "GH₵",
-            status: "For Rent",
-            type: "Apartment",
-            isNew: false,
-            rating: 4.7,
-            beds: 2,
-            baths: 2,
-            sqft: 1200,
-            image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2670&auto=format&fit=crop"
-        },
-        {
-            id: 6,
-            title: "4 Bedroom Family Home",
-            location: "Tema Community 25",
-            price: 2800000,
-            currency: "GH₵",
-            status: "For Sale",
-            type: "House",
-            isNew: false,
-            rating: 4.4,
-            beds: 4,
-            baths: 4,
-            sqft: 3200,
-            image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2574&auto=format&fit=crop"
-        },
-        {
-            id: 7,
-            title: "Studio Apartment at The Gallery",
-            location: "Shiashie, Accra",
-            price: 5000,
-            currency: "GH₵",
-            status: "For Rent",
-            type: "Apartment",
-            isNew: true,
-            rating: 4.8,
-            beds: 1,
-            baths: 1,
-            sqft: 600,
-            image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=2670&auto=format&fit=crop"
-        },
-        {
-            id: 8,
-            title: "Contemporary 4 Bedroom Home",
-            location: "Spintex, Accra",
-            price: 4500000,
-            currency: "GH₵",
-            status: "For Sale",
-            type: "House",
-            isNew: false,
-            rating: 4.6,
-            beds: 4,
-            baths: 4,
-            sqft: 3800,
-            image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=2670&auto=format&fit=crop"
-        },
-        {
-            id: 9,
-            title: "Office Space in High-Rise",
-            location: "Ridge, Accra",
-            price: 15000,
-            currency: "GH₵",
-            status: "For Rent",
-            type: "Office",
-            isNew: false,
-            rating: 4.5,
-            beds: 0,
-            baths: 2,
-            sqft: 2200,
-            image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2669&auto=format&fit=crop"
+    useEffect(() => {
+        const fetchProperties = async () => {
+            try {
+                const [data, typesData, locData] = await Promise.all([
+                    propertyService.getAll(),
+                    propertyService.getTypes(),
+                    propertyService.getLocations()
+                ]);
+                setAllProperties(data);
+                setTypes(typesData);
+                setLocations(locData);
+            } catch (error) {
+                console.error('Error fetching properties:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProperties();
+    }, []);
+
+    useEffect(() => {
+        const type = queryParams.get('type');
+        const loc = queryParams.get('location');
+        const budget = queryParams.get('budget');
+
+        if (type || loc || budget) {
+            setFilters(prev => ({
+                ...prev,
+                type: type || prev.type,
+                location: loc || prev.location,
+                priceRange: budget || prev.priceRange
+            }));
+            setFilterOpen(true);
         }
-    ];
+    }, [location.search]);
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filters]);
+
+    // Helper to parse price string to number
+    const parsePrice = (priceStr) => {
+        if (!priceStr) return 0;
+        return parseFloat(priceStr.toString().replace(/[^0-9.]/g, '')) || 0;
+    };
 
     // Filter logic
     const filteredProperties = allProperties.filter(p => {
         if (filters.type !== 'All' && p.type !== filters.type) return false;
         if (filters.status !== 'All' && p.status !== filters.status) return false;
-        if (filters.beds !== 'All' && p.beds < parseInt(filters.beds)) return false;
+        if (filters.location !== 'All' && p.location !== filters.location) return false;
+        if (filters.beds !== 'All' && parseInt(p.beds) < parseInt(filters.beds)) return false;
+
+        // Budget Filter
+        if (filters.priceRange !== 'All') {
+            const price = parsePrice(p.price);
+            switch (filters.priceRange) {
+                case 'low': if (price > 5000) return false; break;
+                case 'medium': if (price < 5000 || price > 50000) return false; break;
+                case 'high': if (price < 50000 || price > 500000) return false; break;
+                case 'luxury': if (price < 500000) return false; break;
+                default: break;
+            }
+        }
+
         return true;
     });
+
+    // Pagination Logic
+    const totalPages = Math.max(1, Math.ceil(filteredProperties.length / propertiesPerPage));
+    const indexOfLastProperty = currentPage * propertiesPerPage;
+    const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
+    const paginatedProperties = filteredProperties.slice(indexOfFirstProperty, indexOfLastProperty);
 
     return (
         <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
@@ -384,11 +327,17 @@ const Properties = () => {
                                                     onChange={(e) => setFilters({ ...filters, type: e.target.value })}
                                                     style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #e2e8f0', appearance: 'none', outline: 'none', backgroundColor: '#f8fafc' }}
                                                 >
-                                                    <option>All</option>
-                                                    <option>House</option>
-                                                    <option>Apartment</option>
-                                                    <option>Townhouse</option>
-                                                    <option>Villa</option>
+                                                    <option value="All">All Types</option>
+                                                    {types.map(t => (
+                                                        <option key={t} value={t}>{t}</option>
+                                                    ))}
+                                                    {types.length === 0 && (
+                                                        <>
+                                                            <option>House</option>
+                                                            <option>Apartment</option>
+                                                            <option>Villa</option>
+                                                        </>
+                                                    )}
                                                 </select>
                                                 <ChevronDown size={16} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#94a3b8' }} />
                                             </div>
@@ -404,6 +353,22 @@ const Properties = () => {
                                                     <option>All</option>
                                                     <option>For Sale</option>
                                                     <option>For Rent</option>
+                                                </select>
+                                                <ChevronDown size={16} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#94a3b8' }} />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '0.9rem', color: '#64748b' }}>Location</label>
+                                            <div style={{ position: 'relative' }}>
+                                                <select
+                                                    value={filters.location}
+                                                    onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                                                    style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid #e2e8f0', appearance: 'none', outline: 'none', backgroundColor: '#f8fafc' }}
+                                                >
+                                                    <option value="All">All Locations</option>
+                                                    {locations.map(loc => (
+                                                        <option key={loc} value={loc}>{loc}</option>
+                                                    ))}
                                                 </select>
                                                 <ChevronDown size={16} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#94a3b8' }} />
                                             </div>
@@ -481,7 +446,7 @@ const Properties = () => {
                             gap: '2rem'
                         }}
                     >
-                        {filteredProperties.map((property) => (
+                        {paginatedProperties.map((property) => (
                             <PropertyCard key={property.id} property={property} />
                         ))}
                     </motion.div>
@@ -513,36 +478,87 @@ const Properties = () => {
                     )}
 
                     {/* Pagination */}
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginTop: '6rem' }}>
-                        <button disabled style={{ width: '50px', height: '50px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f5f9', color: '#94a3b8', cursor: 'not-allowed' }}>
-                            <ChevronLeft size={20} />
-                        </button>
-                        {[1, 2, 3].map((page) => (
+                    {filteredProperties.length > 0 && (
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginTop: '6rem' }}>
                             <button
-                                key={page}
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
                                 style={{
                                     width: '50px',
                                     height: '50px',
                                     borderRadius: '12px',
-                                    border: page === 1 ? 'none' : '1px solid #e2e8f0',
+                                    border: '1px solid #e2e8f0',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    backgroundColor: page === 1 ? 'var(--accent)' : 'white',
-                                    color: page === 1 ? 'white' : 'var(--primary)',
-                                    fontWeight: '700',
-                                    cursor: 'pointer',
-                                    boxShadow: page === 1 ? '0 10px 15px -3px rgba(37, 99, 235, 0.4)' : 'none'
+                                    backgroundColor: currentPage === 1 ? '#f1f5f9' : 'white',
+                                    color: currentPage === 1 ? '#94a3b8' : 'var(--primary)',
+                                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer'
                                 }}
                             >
-                                {page}
+                                <ChevronLeft size={20} />
                             </button>
-                        ))}
-                        <button style={{ width: '40px', border: 'none', background: 'none', color: '#94a3b8' }}>...</button>
-                        <button style={{ width: '50px', height: '50px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', color: 'var(--primary)', cursor: 'pointer' }}>
-                            <ArrowRight size={20} />
-                        </button>
-                    </div>
+
+                            {[...Array(totalPages)].map((_, i) => {
+                                const pageNumber = i + 1;
+                                // Basic pagination logic to show current, next, prev
+                                if (
+                                    totalPages <= 5 ||
+                                    pageNumber === 1 ||
+                                    pageNumber === totalPages ||
+                                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                                ) {
+                                    return (
+                                        <button
+                                            key={pageNumber}
+                                            onClick={() => setCurrentPage(pageNumber)}
+                                            style={{
+                                                width: '50px',
+                                                height: '50px',
+                                                borderRadius: '12px',
+                                                border: pageNumber === currentPage ? 'none' : '1px solid #e2e8f0',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: pageNumber === currentPage ? 'var(--accent)' : 'white',
+                                                color: pageNumber === currentPage ? 'white' : 'var(--primary)',
+                                                fontWeight: '700',
+                                                cursor: 'pointer',
+                                                boxShadow: pageNumber === currentPage ? '0 10px 15px -3px rgba(37, 99, 235, 0.4)' : 'none'
+                                            }}
+                                        >
+                                            {pageNumber}
+                                        </button>
+                                    );
+                                } else if (
+                                    (pageNumber === currentPage - 2 && pageNumber > 1) ||
+                                    (pageNumber === currentPage + 2 && pageNumber < totalPages)
+                                ) {
+                                    return <span key={pageNumber} style={{ color: '#94a3b8' }}>...</span>;
+                                }
+                                return null;
+                            })}
+
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                style={{
+                                    width: '50px',
+                                    height: '50px',
+                                    borderRadius: '12px',
+                                    border: '1px solid #e2e8f0',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: currentPage === totalPages ? '#f1f5f9' : 'white',
+                                    color: currentPage === totalPages ? '#94a3b8' : 'var(--primary)',
+                                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer'
+                                }}
+                            >
+                                <ArrowRight size={20} />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </section>
 

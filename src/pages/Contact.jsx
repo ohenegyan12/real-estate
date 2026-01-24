@@ -3,8 +3,36 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, Send, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { inquiryService } from '../services/api';
 
 const Contact = () => {
+    const [formData, setFormData] = React.useState({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+    });
+    const [status, setStatus] = React.useState({ loading: false, success: false, error: null });
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setStatus({ loading: true, success: false, error: null });
+        try {
+            await inquiryService.create(formData);
+            setStatus({ loading: false, success: true, error: null });
+            setFormData({ name: '', email: '', subject: '', message: '' });
+            setTimeout(() => setStatus(prev => ({ ...prev, success: false })), 5000);
+        } catch (err) {
+            console.error('Error submitting inquiry:', err);
+            setStatus({ loading: false, success: false, error: 'Failed to send message. Please try again.' });
+        }
+    };
+
     const contactInfo = [
         {
             icon: <Phone size={24} />,
@@ -154,27 +182,75 @@ const Contact = () => {
                             Fill out the form below and one of our property consultants will reach out to you within 24 hours.
                         </p>
 
-                        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        {status.success && (
+                            <div style={{ backgroundColor: '#ecfdf5', color: '#059669', padding: '1rem', borderRadius: '12px', marginBottom: '2rem', fontWeight: '700' }}>
+                                Thank you! Your message has been sent successfully.
+                            </div>
+                        )}
+                        {status.error && (
+                            <div style={{ backgroundColor: '#fef2f2', color: '#dc2626', padding: '1rem', borderRadius: '12px', marginBottom: '2rem', fontWeight: '700' }}>
+                                {status.error}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                             <div className="contact-form-row">
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <label style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.9rem' }}>Full Name</label>
-                                    <input type="text" placeholder="John Doe" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        required
+                                        placeholder="John Doe"
+                                        style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
+                                    />
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <label style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.9rem' }}>Email Address</label>
-                                    <input type="email" placeholder="john@example.com" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        required
+                                        placeholder="john@example.com"
+                                        style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
+                                    />
                                 </div>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.9rem' }}>Subject</label>
-                                <input type="text" placeholder="Inquiry about property" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
+                                <input
+                                    type="text"
+                                    name="subject"
+                                    value={formData.subject}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="Inquiry about property"
+                                    style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
+                                />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.9rem' }}>Message</label>
-                                <textarea rows="5" placeholder="How can we help you?" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}></textarea>
+                                <textarea
+                                    rows="5"
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={handleInputChange}
+                                    required
+                                    placeholder="How can we help you?"
+                                    style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}
+                                ></textarea>
                             </div>
-                            <button className="btn btn-primary" style={{ padding: '1.25rem', borderRadius: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
-                                <Send size={20} /> Send Message
+                            <button
+                                type="submit"
+                                disabled={status.loading}
+                                className="btn btn-primary"
+                                style={{ padding: '1.25rem', borderRadius: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', opacity: status.loading ? 0.7 : 1 }}
+                            >
+                                <Send size={20} /> {status.loading ? 'Sending...' : 'Send Message'}
                             </button>
                         </form>
                     </motion.div>

@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "title": "Top 10 Neighborhoods to Live in Accra 2024",
+        "excerpt": "Discover the most sought-after locations for luxury and comfort in Ghana's capital.",
+        "content": "Full content about Accra neighborhoods...",
+        "category": "Market Trends",
+        "image": "https://images.unsplash.com/photo-1590402444811-bfee29d17f8a?auto=format&fit=crop&w=1200",
+        "date": "2024-01-20",
+        "author": "Kwame Mensah"
+    },
+    {
+        "id": 2,
+        "title": "The Ultimate Guide to Buying Your First Home in Ghana",
+        "excerpt": "Everything you need to know about the mortgage process and land registration.",
+        "content": "Full content about buying a home...",
+        "category": "Buyer Guide",
+        "image": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200",
+        "date": "2024-01-15",
+        "author": "Kwame Mensah"
+    }
+]

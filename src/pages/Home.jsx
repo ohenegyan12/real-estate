@@ -1,60 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PropertyCard from '../components/PropertyCard';
 import Counter from '../components/Counter';
-import { Search, ChevronDown, MapPin, Building, Home as HomeIcon, Building2, Store, ArrowLeft, ArrowRight, Users, ThumbsUp, CheckCircle, Calendar } from 'lucide-react';
+import { propertyService, settingsService, categoryService } from '../services/api';
+import { Search, ChevronDown, MapPin, Building, Home as HomeIcon, Building2, Store, ArrowLeft, ArrowRight, Users, ThumbsUp, CheckCircle, Calendar, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Home = () => {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('General');
+    const [properties, setProperties] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [locations, setLocations] = useState([]);
+    const [types, setTypes] = useState([]);
+    const [settings, setSettings] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [searchForm, setSearchForm] = useState({
+        location: '',
+        type: '',
+        budget: ''
+    });
 
-    // Mock Data
-    const properties = [
-        {
-            id: 1,
-            title: "3 bedroom house for sale at East legon Hills",
-            location: "East legon hills",
-            price: 3263000,
-            currency: "GH₵",
-            priceSub: "50% accepted GH₵1,631,500",
-            status: "For Sale",
-            isNew: true,
-            rating: 4.5,
-            beds: 3,
-            baths: 4,
-            sqft: 500,
-            image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2671&auto=format&fit=crop"
-        },
-        {
-            id: 2,
-            title: "Three (3) Bedroom Apartments For Rent at Madina",
-            location: "Madina",
-            price: 7500,
-            currency: "GH₵",
-            status: "For Rent",
-            isNew: true,
-            rating: 4.5,
-            beds: 3,
-            baths: 4,
-            sqft: 500,
-            image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2670&auto=format&fit=crop"
-        },
-        {
-            id: 3,
-            title: "Three (3) Bedroom Townhouse For Rent at Oyarifa",
-            location: "Oyarifa",
-            price: 4000,
-            currency: "GH₵",
-            status: "For Rent",
-            isNew: true,
-            rating: 4.5,
-            beds: 3,
-            baths: 3,
-            sqft: 500,
-            image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop"
-        },
-    ];
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        const params = new URLSearchParams();
+        if (searchForm.location) params.append('location', searchForm.location);
+        if (searchForm.type) params.append('type', searchForm.type);
+        if (searchForm.budget) params.append('budget', searchForm.budget);
+        navigate(`/properties?${params.toString()}`);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [propsData, settingsData, catData, typesData, locData] = await Promise.all([
+                    propertyService.getAll(),
+                    settingsService.get(),
+                    categoryService.getAll(),
+                    propertyService.getTypes(),
+                    propertyService.getLocations()
+                ]);
+                setProperties(propsData); // Store all properties to get accurate count
+                setSettings(settingsData);
+                setCategories(catData);
+                setTypes(typesData);
+                setLocations(locData);
+            } catch (error) {
+                console.error('Error fetching home data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    // Helper to parse strings like "1,200+" into numbers for the counter
+    const parseStat = (val) => {
+        if (!val) return 0;
+        const cleaned = val.toString().replace(/[^0-9]/g, '');
+        return parseInt(cleaned) || 0;
+    };
+
+    // Format stats for the counter section
+    const getStats = () => {
+        const propsStat = settings?.stats?.propertiesListed;
+        const experienceStat = settings?.stats?.yearsExperience;
+        const clientsStat = settings?.stats?.happyClients;
+        const awardsStat = settings?.stats?.awardsWon;
+
+        return [
+            {
+                icon: <Calendar size={32} color="white" />,
+                to: parseStat(experienceStat),
+                label: 'Years Experience'
+            },
+            {
+                icon: <HomeIcon size={32} color="white" />,
+                to: (propsStat !== undefined && propsStat !== null && propsStat !== '')
+                    ? parseStat(propsStat)
+                    : properties.length,
+                label: 'Properties Listed'
+            },
+            {
+                icon: <Users size={32} color="white" />,
+                to: parseStat(clientsStat),
+                label: 'Happy Clients'
+            },
+            {
+                icon: <Award size={32} color="white" />,
+                to: parseStat(awardsStat),
+                label: 'Awards Won'
+            },
+        ];
+    };
 
     return (
         <div>
@@ -154,18 +194,27 @@ const Home = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="hero-search-container"
+                        style={{ display: 'flex' }}
                     >
                         {/* Input Group 1 */}
                         <div className="search-group">
                             <label className="search-label">Location</label>
                             <div className="search-input-wrapper">
-                                <select className="search-select">
-                                    <option value="" disabled selected>Select City</option>
-                                    <option value="Accra">Accra</option>
-                                    <option value="Kumasi">Kumasi</option>
-                                    <option value="Takoradi">Takoradi</option>
-                                    <option value="Tema">Tema</option>
-                                    <option value="Cape Coast">Cape Coast</option>
+                                <select
+                                    className="search-select"
+                                    value={searchForm.location}
+                                    onChange={(e) => setSearchForm({ ...searchForm, location: e.target.value })}
+                                >
+                                    <option value="">Select City</option>
+                                    {locations.map(loc => (
+                                        <option key={loc} value={loc}>{loc}</option>
+                                    ))}
+                                    {locations.length === 0 && (
+                                        <>
+                                            <option value="Accra">Accra</option>
+                                            <option value="Kumasi">Kumasi</option>
+                                        </>
+                                    )}
                                 </select>
                                 <ChevronDown size={16} color="#999" className="select-icon" />
                             </div>
@@ -175,13 +224,21 @@ const Home = () => {
                         <div className="search-group">
                             <label className="search-label">Property Type</label>
                             <div className="search-input-wrapper">
-                                <select className="search-select">
-                                    <option value="" disabled selected>Property Type</option>
-                                    <option value="Apartment">Apartment</option>
-                                    <option value="House">House</option>
-                                    <option value="Land">Land</option>
-                                    <option value="Office">Office</option>
-                                    <option value="Commercial">Commercial</option>
+                                <select
+                                    className="search-select"
+                                    value={searchForm.type}
+                                    onChange={(e) => setSearchForm({ ...searchForm, type: e.target.value })}
+                                >
+                                    <option value="">Property Type</option>
+                                    {types.map(type => (
+                                        <option key={type} value={type}>{type}</option>
+                                    ))}
+                                    {types.length === 0 && (
+                                        <>
+                                            <option value="Apartment">Apartment</option>
+                                            <option value="House">House</option>
+                                        </>
+                                    )}
                                 </select>
                                 <ChevronDown size={16} color="#999" className="select-icon" />
                             </div>
@@ -191,20 +248,23 @@ const Home = () => {
                         <div className="search-group no-border">
                             <label className="search-label">Price Range</label>
                             <div className="search-input-wrapper">
-                                <select className="search-select">
-                                    <option value="" disabled selected>Budget</option>
-                                    <option value="Any">Any Price</option>
-                                    <option value="low">GH₵ 1,000 - 5,000</option>
-                                    <option value="medium">GH₵ 5,000 - 50,000</option>
-                                    <option value="high">GH₵ 50,000 - 500,000</option>
+                                <select
+                                    className="search-select"
+                                    value={searchForm.budget}
+                                    onChange={(e) => setSearchForm({ ...searchForm, budget: e.target.value })}
+                                >
+                                    <option value="">Budget</option>
                                     <option value="luxury">GH₵ 500,000+</option>
+                                    <option value="high">GH₵ 50,000 - 500,000</option>
+                                    <option value="medium">GH₵ 5,000 - 50,000</option>
+                                    <option value="low">GH₵ 1,000 - 5,000</option>
                                 </select>
                                 <ChevronDown size={16} color="#999" className="select-icon" />
                             </div>
                         </div>
 
                         {/* Search Button */}
-                        <button className="search-btn">
+                        <button className="search-btn" onClick={handleSearchSubmit}>
                             <Search size={20} />
                             <span>Search</span>
                         </button>
@@ -250,55 +310,61 @@ const Home = () => {
                     </div>
 
                     <div className="grid-3">
-                        {[
-                            { icon: <Building size={28} />, title: 'Apartments', count: '230+ Properties' },
-                            { icon: <HomeIcon size={28} />, title: 'Modern Houses', count: '140+ Properties' },
-                            { icon: <Building2 size={28} />, title: 'Villas', count: '85+ Properties' },
-                        ].map((category, index) => (
-                            <motion.div
-                                key={index}
-                                whileHover={{ y: -10 }}
-                                style={{
-                                    backgroundColor: '#fff',
-                                    borderRadius: '24px',
-                                    padding: '3rem 2rem',
-                                    textAlign: 'left',
-                                    border: '1px solid #f3f4f6',
-                                    cursor: 'pointer',
-                                    position: 'relative',
-                                    overflow: 'hidden',
-                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)',
-                                    transition: 'all 0.3s ease'
-                                }}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.borderColor = 'var(--accent)';
-                                    e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(37, 99, 235, 0.1), 0 8px 10px -6px rgba(37, 99, 235, 0.1)';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.borderColor = '#f3f4f6';
-                                    e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.02)';
-                                }}
-                            >
-                                <div style={{
-                                    width: '64px',
-                                    height: '64px',
-                                    backgroundColor: '#eff6ff',
-                                    borderRadius: '16px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginBottom: '1.5rem',
-                                    color: 'var(--accent)'
-                                }}>
-                                    {category.icon}
-                                </div>
-                                <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--primary)', fontWeight: '700', letterSpacing: '-0.5px' }}>{category.title}</h3>
-                                <p style={{ color: 'var(--text-light)', fontSize: '1rem', marginBottom: '1.5rem' }}>{category.count}</p>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)', fontWeight: '600', fontSize: '0.95rem' }}>
-                                    Explore <ArrowRight size={18} color="var(--accent)" />
-                                </div>
-                            </motion.div>
-                        ))}
+                        {categories.map((category, index) => {
+                            const IconComponent = {
+                                'Building': Building,
+                                'Home': HomeIcon,
+                                'Building2': Building2,
+                                'Store': Store
+                            }[category.icon] || Building;
+
+                            return (
+                                <motion.div
+                                    key={index}
+                                    whileHover={{ y: -10 }}
+                                    onClick={() => navigate(`/properties?type=${category.type}`)}
+                                    style={{
+                                        backgroundColor: '#fff',
+                                        borderRadius: '24px',
+                                        padding: '3rem 2rem',
+                                        textAlign: 'left',
+                                        border: '1px solid #f3f4f6',
+                                        cursor: 'pointer',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.currentTarget.style.borderColor = 'var(--accent)';
+                                        e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(37, 99, 235, 0.1), 0 8px 10px -6px rgba(37, 99, 235, 0.1)';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.currentTarget.style.borderColor = '#f3f4f6';
+                                        e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.02)';
+                                    }}
+                                >
+                                    <div style={{
+                                        width: '64px',
+                                        height: '64px',
+                                        backgroundColor: '#eff6ff',
+                                        borderRadius: '16px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginBottom: '1.5rem',
+                                        color: 'var(--accent)'
+                                    }}>
+                                        <IconComponent size={28} />
+                                    </div>
+                                    <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--primary)', fontWeight: '700', letterSpacing: '-0.5px' }}>{category.title}</h3>
+                                    <p style={{ color: 'var(--text-light)', fontSize: '1rem', marginBottom: '1.5rem' }}>{category.count}</p>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)', fontWeight: '600', fontSize: '0.95rem' }}>
+                                        Explore <ArrowRight size={18} color="var(--accent)" />
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
                     </div>
                 </div>
             </motion.section>
@@ -344,7 +410,7 @@ const Home = () => {
                     </div>
 
                     <div className="grid-3">
-                        {properties.map((property) => (
+                        {properties.slice(0, 3).map((property) => (
                             <PropertyCard key={property.id} property={property} />
                         ))}
                     </div>
@@ -373,12 +439,7 @@ const Home = () => {
                         gap: '1.5rem',
                         textAlign: 'center'
                     }} className="grid-cols-1-mobile">
-                        {[
-                            { icon: <HomeIcon size={32} color="white" />, to: 2500, label: 'Properties Sold' },
-                            { icon: <Users size={32} color="white" />, to: 850, label: 'Happy Clients' },
-                            { icon: <Building2 size={32} color="white" />, to: 150, label: 'Awards Won' },
-                            { icon: <MapPin size={32} color="white" />, to: 15, label: 'Cities Covered' },
-                        ].map((stat, index) => (
+                        {getStats().map((stat, index) => (
                             <motion.div
                                 key={index}
                                 whileHover={{ y: -10 }}
@@ -456,58 +517,93 @@ const Home = () => {
                         gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
                         gap: '1.5rem'
                     }} className="grid-cols-1-mobile">
-                        {[
-                            { name: 'Spintex', count: '24 Properties', image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=2670&auto=format&fit=crop' },
-                            { name: 'Oyarifa', count: '12 Properties', image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop' },
-                            { name: 'East Airport', count: '12 Properties', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop' },
-                            { name: 'Tse Addo', count: '10 Properties', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop' },
-                            { name: 'Adenta', count: '8 Properties', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop' },
-                            { name: 'Lakeside', count: '7 Properties', image: 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=2670&auto=format&fit=crop' },
-                        ].map((location, index) => (
-                            <motion.div
-                                key={index}
-                                whileHover={{ y: -10 }}
-                                style={{
-                                    position: 'relative',
-                                    height: '350px',
-                                    borderRadius: '24px',
-                                    overflow: 'hidden',
-                                    cursor: 'pointer',
-                                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-                                }}
-                            >
-                                <img
-                                    src={location.image}
-                                    alt={location.name}
+                        {(() => {
+                            const locCounts = properties.reduce((acc, p) => {
+                                if (!p.location) return acc;
+                                acc[p.location] = (acc[p.location] || 0) + 1;
+                                return acc;
+                            }, {});
+
+                            const locImages = {
+                                'Spintex': 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=2670&auto=format&fit=crop',
+                                'Oyarifa': 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop',
+                                'East Airport': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop',
+                                'East Legon': 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=2584&auto=format&fit=crop',
+                                'Tse Addo': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop',
+                                'Adenta': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop',
+                                'Lakeside': 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=2670&auto=format&fit=crop',
+                                'Default': 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=2592&auto=format&fit=crop'
+                            };
+
+                            const locs = Object.entries(locCounts)
+                                .map(([name, count]) => {
+                                    const normalizedName = name.trim();
+                                    const imgKey = Object.keys(locImages).find(k =>
+                                        normalizedName.toLowerCase().includes(k.toLowerCase())
+                                    );
+                                    return {
+                                        name: normalizedName,
+                                        count: `${count} Propert${count === 1 ? 'y' : 'ies'}`,
+                                        image: locImages[imgKey] || locImages['Default']
+                                    };
+                                })
+                                .sort((a, b) => parseInt(b.count) - parseInt(a.count))
+                                .slice(0, 6);
+
+                            // If no properties, show defaults so section isn't empty
+                            const displayLocs = locs.length > 0 ? locs : [
+                                { name: 'Spintex', count: '0 Properties', image: locImages['Spintex'] },
+                                { name: 'Oyarifa', count: '0 Properties', image: locImages['Oyarifa'] },
+                                { name: 'East Airport', count: '0 Properties', image: locImages['East Airport'] }
+                            ];
+
+                            return displayLocs.map((location, index) => (
+                                <motion.div
+                                    key={index}
+                                    whileHover={{ y: -10 }}
+                                    onClick={() => navigate(`/properties?location=${location.name}`)}
                                     style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        transition: 'transform 0.7s ease'
+                                        position: 'relative',
+                                        height: '350px',
+                                        borderRadius: '24px',
+                                        overflow: 'hidden',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
                                     }}
-                                    onMouseOver={(e) => e.target.style.transform = 'scale(1.15)'}
-                                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-                                />
-                                <div style={{
-                                    position: 'absolute',
-                                    inset: 0,
-                                    background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'flex-end',
-                                    padding: '2rem'
-                                }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                                        <div>
-                                            <h3 style={{ color: 'white', fontSize: '1.75rem', marginBottom: '0.5rem', fontWeight: '700' }}>{location.name}</h3>
-                                            <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                {location.count} <ArrowRight size={16} color="var(--accent)" />
-                                            </p>
+                                >
+                                    <img
+                                        src={location.image}
+                                        alt={location.name}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            transition: 'transform 0.7s ease'
+                                        }}
+                                        onMouseOver={(e) => e.target.style.transform = 'scale(1.15)'}
+                                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                                    />
+                                    <div style={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'flex-end',
+                                        padding: '2rem'
+                                    }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                                            <div>
+                                                <h3 style={{ color: 'white', fontSize: '1.75rem', marginBottom: '0.5rem', fontWeight: '700' }}>{location.name}</h3>
+                                                <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                    {location.count} <ArrowRight size={16} color="var(--accent)" />
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </motion.div>
-                        ))}
+                                </motion.div>
+                            ));
+                        })()}
                     </div>
                 </div>
             </motion.section>

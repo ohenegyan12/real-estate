@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { propertyService } from '../services/api';
 import {
     MapPin, Bed, Bath, Square, Star, Heart, Share2, Printer,
     CheckCircle2, Phone, Calendar, Mail, User, ShieldCheck,
@@ -12,53 +13,52 @@ import { motion, AnimatePresence } from 'framer-motion';
 const PropertyDetail = () => {
     const { id } = useParams();
     const [activeImage, setActiveImage] = useState(0);
+    const [paymentPeriod, setPaymentPeriod] = useState('4 Months');
     const [isFavorite, setIsFavorite] = useState(false);
+    const [property, setProperty] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Mock detailed data for a specific property (usually you'd fetch this based on ID)
-    const property = {
-        id: id,
-        title: "Executive 5 Bedroom Villa with Private Pool & Garden",
-        location: "Airport Residential Area, Accra",
-        address: "Lane 5, Airport Residential, Accra, Ghana",
-        price: 12500000,
-        currency: "GH₵",
-        status: "For Sale",
-        isNew: true,
-        rating: 4.9,
-        reviews: 24,
-        beds: 5,
-        baths: 6,
-        sqft: 5500,
-        yearBuilt: 2023,
-        type: "Villa",
-        description: "Experience the pinnacle of luxury living in this magnificent 5-bedroom villa located in the heart of Accra's most prestigious neighborhood. This architectural masterpiece combines modern sophistication with timeless elegance, featuring expansive living spaces, high-end finishes, and a seamless indoor-outdoor flow perfect for entertaining.\n\nThe ground floor welcomes you with a grand double-height foyer leading to multiple formal and informal living areas. The gourmet kitchen is equipped with state-of-the-art appliances and a separate butler's pantry. Upstairs, you'll find five generous en-suite bedrooms, including a spectacular master suite with a private balcony, walk-in closets, and a spa-like bathroom.",
-        images: [
-            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2500&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=2670&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1600596542815-3ad19e81d7f6?q=80&w=2669&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=2574&auto=format&fit=crop"
-        ],
-        amenities: [
-            "Swimming Pool", "Gym / Fitness Center", "24/7 Security", "Smart Home System",
-            "Backup Power (Generator)", "Reserve Water Tank", "Modern Kitchen Appliances",
-            "Private Garden", "Servant's Quarters", "High-speed Internet", "Walk-in Closets", "Electric Fencing"
-        ],
-        agent: {
-            name: "Kwame Mensah",
-            role: "Senior Real Estate Consultant",
-            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop",
-            phone: "+233 55 336 4848",
-            email: "owusuhomesgh@gmail.com"
-        }
-    };
+    useEffect(() => {
+        const fetchProperty = async () => {
+            try {
+                const data = await propertyService.getAll();
+                const found = data.find(p => p.id === parseInt(id) || p.id === id);
+                if (found) {
+                    // Normalize data structure for UI if needed
+                    setProperty({
+                        ...found,
+                        images: found.images || [found.image],
+                        reviews: found.reviews || 24,
+                        rating: found.rating || 4.8,
+                        yearBuilt: found.yearBuilt || 2023,
+                        description: found.description || "No description provided.",
+                        amenities: found.amenities || [
+                            "Swimming Pool", "24/7 Security", "Backup Power", "Modern Kitchen", "Private Garden"
+                        ],
+                        agent: found.agent || {
+                            name: "Kwame Mensah",
+                            role: "Senior Consultant",
+                            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop",
+                            phone: "+233 55 336 4848",
+                            email: "owusuhomesgh@gmail.com"
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching property detail:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProperty();
+        window.scrollTo(0, 0);
+    }, [id]);
+
+    if (loading) return <div style={{ paddingTop: '15rem', textAlign: 'center' }}>Loading property details...</div>;
+    if (!property) return <div style={{ paddingTop: '15rem', textAlign: 'center' }}>Property not found.</div>;
 
     const nextImage = () => setActiveImage((prev) => (prev + 1) % property.images.length);
     const prevImage = () => setActiveImage((prev) => (prev - 1 + property.images.length) % property.images.length);
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
 
     return (
         <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
@@ -82,7 +82,7 @@ const PropertyDetail = () => {
                                 <span style={{ backgroundColor: '#f1f5f9', color: 'var(--primary)', padding: '0.4rem 1rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: '700' }}>{property.type}</span>
                             </div>
                             <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: '800', color: 'var(--primary)', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
-                                {property.title}
+                                {property.title || property.name}
                             </h1>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#64748b', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -320,6 +320,68 @@ const PropertyDetail = () => {
 
                     {/* Right Column - Sidebar */}
                     <div>
+                        {/* Payment Plan Section */}
+                        {property.hasPaymentPlan && (
+                            <div style={{
+                                backgroundColor: 'white',
+                                padding: '2rem',
+                                borderRadius: '24px',
+                                boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)',
+                                marginBottom: '2rem'
+                            }}>
+                                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <CheckCircle2 size={24} color="#10b981" /> 50/50 Payment Plan
+                                </h3>
+                                <p style={{ fontSize: '0.95rem', color: '#64748b', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                                    Pay <strong>50% upfront</strong> and the remaining 50% over your preferred period.
+                                </p>
+
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                                        <span style={{ color: '#64748b' }}>Upfront (50%)</span>
+                                        <span style={{ fontWeight: '700', color: 'var(--primary)' }}>{property.currency}{(property.price / 2).toLocaleString()}</span>
+                                    </div>
+                                    <div style={{ height: '8px', backgroundColor: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
+                                        <div style={{ width: '50%', height: '100%', backgroundColor: '#10b981' }}></div>
+                                    </div>
+                                </div>
+
+                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '0.75rem' }}>SELECT INSTALLMENT PERIOD</label>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+                                    {['4 Months', '8 Months', '12 Months'].map((period) => (
+                                        <button
+                                            key={period}
+                                            onClick={() => setPaymentPeriod(period)}
+                                            style={{
+                                                padding: '0.75rem 0.5rem',
+                                                borderRadius: '12px',
+                                                fontSize: '0.85rem',
+                                                fontWeight: '700',
+                                                border: '2px solid',
+                                                borderColor: paymentPeriod === period ? 'var(--accent)' : '#f1f5f9',
+                                                backgroundColor: paymentPeriod === period ? '#eff6ff' : 'white',
+                                                color: paymentPeriod === period ? 'var(--accent)' : '#64748b',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            {period}
+                                        </button>
+                                    ))}
+                                </div>
+                                {paymentPeriod && (
+                                    <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px dashed #e2e8f0' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Monthly Payment</span>
+                                            <span style={{ fontWeight: '800', fontSize: '1.1rem', color: 'var(--accent)' }}>
+                                                {property.currency}{Math.round((property.price / 2) / parseInt(paymentPeriod)).toLocaleString()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         {/* Agent Card */}
                         <div style={{
                             backgroundColor: 'white',
@@ -343,32 +405,7 @@ const PropertyDetail = () => {
                                 </div>
                             </div>
 
-                            <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <input type="text" placeholder="Your Name" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
-                                <input type="email" placeholder="Your Email" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
-                                <input type="tel" placeholder="Your Phone" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }} />
-                                <textarea placeholder="I'm interested in this property..." rows="4" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}></textarea>
-
-                                <button className="btn btn-primary" style={{ padding: '1.25rem', borderRadius: '12px', width: '100%', marginTop: '1rem', fontWeight: '700' }}>
-                                    Send Inquiry
-                                </button>
-
-                                <a href={`tel:${property.agent.phone}`} style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '0.75rem',
-                                    padding: '1.25rem',
-                                    borderRadius: '12px',
-                                    border: '2px solid #e2e8f0',
-                                    color: 'var(--primary)',
-                                    fontWeight: '700',
-                                    textDecoration: 'none',
-                                    transition: 'all 0.2s'
-                                }}>
-                                    <Phone size={20} color="var(--accent)" /> {property.agent.phone}
-                                </a>
-                            </form>
+                            <AgentContactForm property={property} />
 
                             <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#10b981', backgroundColor: '#ecfdf5', padding: '1rem', borderRadius: '12px', fontSize: '0.9rem' }}>
                                 <ShieldCheck size={20} />
@@ -382,6 +419,106 @@ const PropertyDetail = () => {
 
             <Footer />
         </div>
+    );
+};
+
+const AgentContactForm = ({ property }) => {
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        message: `I'm interested in "${property.title || property.name}"`
+    });
+    const [status, setStatus] = useState({ loading: false, success: false });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setStatus({ loading: true, success: false });
+        try {
+            await import('../services/api').then(m => m.inquiryService.create({
+                ...formData,
+                propertyId: property.id,
+                propertyTitle: property.title || property.name,
+                subject: `Property Inquiry: ${property.title || property.name}`
+            }));
+            setStatus({ loading: false, success: true });
+            setFormData(prev => ({ ...prev, name: '', email: '', phone: '' }));
+            setTimeout(() => setStatus({ loading: false, success: false }), 5000);
+        } catch (err) {
+            console.error(err);
+            setStatus({ loading: false, success: false });
+        }
+    };
+
+    if (status.success) {
+        return (
+            <div style={{ backgroundColor: '#ecfdf5', color: '#059669', padding: '1.5rem', borderRadius: '12px', textAlign: 'center', fontWeight: '700' }}>
+                <CheckCircle2 size={32} style={{ marginBottom: '0.5rem' }} />
+                <p>Inquiry sent successfully!</p>
+            </div>
+        );
+    }
+
+    return (
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <input
+                type="text"
+                placeholder="Your Name"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
+            />
+            <input
+                type="email"
+                placeholder="Your Email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
+            />
+            <input
+                type="tel"
+                placeholder="Your Phone"
+                required
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
+            />
+            <textarea
+                placeholder="Message..."
+                rows="4"
+                required
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}
+            ></textarea>
+
+            <button
+                type="submit"
+                disabled={status.loading}
+                className="btn btn-primary"
+                style={{ padding: '1.25rem', borderRadius: '12px', width: '100%', marginTop: '1rem', fontWeight: '700', opacity: status.loading ? 0.7 : 1 }}
+            >
+                {status.loading ? 'Sending...' : 'Contact Agent'}
+            </button>
+
+            <a href={`tel:${property.agent.phone}`} style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.75rem',
+                padding: '1.25rem',
+                borderRadius: '12px',
+                border: '2px solid #e2e8f0',
+                color: 'var(--primary)',
+                fontWeight: '700',
+                textDecoration: 'none',
+                transition: 'all 0.2s'
+            }}>
+                <Phone size={20} color="var(--accent)" /> {property.agent.phone}
+            </a>
+        </form>
     );
 };
 
