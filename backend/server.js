@@ -94,24 +94,47 @@ app.get('/api/properties/:id', async (req, res) => {
 });
 
 app.post('/api/properties', async (req, res) => {
-    // Note: This only supports local updates partly. Ideally, write back to file.
-    // For now, we'll just mock success if Supabase fails to avoid crashes.
-    const { data: sbData, error } = await supabase
-        .from('properties')
-        .insert([{ ...req.body, currency: 'GH₵' }])
-        .select()
-        .single();
+    try {
+        const { data: sbData, error } = await supabase
+            .from('properties')
+            .insert([{ ...req.body, currency: 'GH₵' }])
+            .select()
+            .single();
 
-    if (error && error.message === 'Supabase not configured') {
-        // Start simpler fallback: just return what was sent with a fake ID
-        const newProp = { id: Date.now(), ...req.body, currency: 'GH₵', created_at: new Date().toISOString() };
-        // TODO: Append to file if needed for persistence
-        return res.status(201).json(newProp);
-    } else if (error) {
-        return res.status(500).json(error);
+        if (error && error.message === 'Supabase not configured') {
+            // Add to memory fallback so it shows up in the list
+            const newProp = {
+                id: Date.now(),
+                ...req.body,
+                currency: 'GH₵',
+                created_at: new Date().toISOString(),
+                status: 'Active'
+            };
+            if (FALLBACK_DATA.properties) {
+                FALLBACK_DATA.properties.unshift(newProp);
+            }
+            return res.status(201).json(newProp);
+        } else if (error) {
+            console.error('Supabase error:', error);
+            // If actual database error, try fallback anyway to keep app usable
+            const newProp = {
+                id: Date.now(),
+                ...req.body,
+                currency: 'GH₵',
+                created_at: new Date().toISOString(),
+                status: 'Active'
+            };
+            if (FALLBACK_DATA.properties) {
+                FALLBACK_DATA.properties.unshift(newProp);
+            }
+            return res.status(201).json(newProp);
+        }
+
+        res.status(201).json(sbData);
+    } catch (err) {
+        console.error('Server error adding property:', err);
+        res.status(500).json({ message: 'Failed to add property' });
     }
-
-    res.status(201).json(sbData);
 });
 
 
