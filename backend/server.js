@@ -294,42 +294,44 @@ app.get('/api/dashboard/stats', async (req, res) => {
 
 // Auth
 app.post('/api/auth/login', async (req, res) => {
-    const { email, password } = req.body;
-    let user = null;
-    let error = null;
-
     try {
-        // Try Supabase first if configured
-        const result = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', email)
-            .eq('password', password)
-            .single();
+        const { email, password } = req.body;
+        let user = null;
+        let error = null;
 
-        user = result.data;
-        error = result.error;
-    } catch (e) {
-        console.warn('Supabase auth failed (using fallback):', e.message);
-        // Do not throw, just ensure user is null so fallback triggers
-        user = null;
-        error = { message: 'Supabase not configured' };
-    }
+        try {
+            // Try Supabase first if configured
+            const result = await supabase
+                .from('users')
+                .select('*')
+                .eq('email', email)
+                .eq('password', password)
+                .single();
 
-    // Fallback to local JSON if Supabase fails or isn't configured
-    if (!user || (error && error.message === 'Supabase not configured')) {
-        // Check memory fallback first
-        if (FALLBACK_DATA.users) {
-            user = FALLBACK_DATA.users.find(u => u.email === email && u.password === password);
+            user = result.data;
+            error = result.error;
+        } catch (e) {
+            console.warn('Supabase auth failed (using fallback):', e.message);
+            user = null;
+            error = { message: 'Supabase not configured' };
         }
 
+        // Fallback to local JSON if Supabase fails or isn't configured
+        if (!user || (error && error.message === 'Supabase not configured')) {
+            // Check memory fallback first
+            if (FALLBACK_DATA.users) {
+                user = FALLBACK_DATA.users.find(u => u.email === email && u.password === password);
+            }
+        }
 
-    }
-
-    if (user) {
-        res.json({ success: true, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
-    } else {
-        res.status(401).json({ success: false, message: 'Invalid credentials' });
+        if (user) {
+            res.json({ success: true, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
+        } else {
+            res.status(401).json({ success: false, message: 'Invalid credentials' });
+        }
+    } catch (criticalError) {
+        console.error('Critical login error:', criticalError);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 
