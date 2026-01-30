@@ -240,6 +240,10 @@ app.get('/api/settings', async (req, res) => {
     } catch (e) { }
 
     if (!data || (error && error.message === 'Supabase not configured')) {
+        if (FALLBACK_DATA.settings) {
+            data = FALLBACK_DATA.settings;
+        }
+
         try {
             const fs = require('fs');
             const path = require('path');
@@ -278,7 +282,7 @@ app.get('/api/dashboard/stats', async (req, res) => {
     const inquiries = await getDataWithFallback('inquiries', 'inquiries.json');
 
     // Get settings safely
-    let settings = {};
+    let settings = FALLBACK_DATA.settings || {};
     try {
         const fs = require('fs');
         const path = require('path');
