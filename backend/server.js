@@ -320,9 +320,7 @@ app.post('/api/auth/login', async (req, res) => {
             user = FALLBACK_DATA.users.find(u => u.email === email && u.password === password);
         }
 
-        if (!user) {
-            // No user found in Supabase or memory fallback
-        }
+
     }
 
     if (user) {
