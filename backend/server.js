@@ -54,19 +54,7 @@ const getDataWithFallback = async (table, mockFile) => {
         if (FALLBACK_DATA[table]) {
             data = FALLBACK_DATA[table];
         } else {
-            // Try fs as last resort (works locally)
-            try {
-                const fs = require('fs');
-                const path = require('path');
-                const filePath = path.join(__dirname, 'data', mockFile);
-                if (fs.existsSync(filePath)) {
-                    const fileContent = fs.readFileSync(filePath, 'utf8');
-                    data = fileContent ? JSON.parse(fileContent) : [];
-                }
-            } catch (localErr) {
-                console.error(`Local ${table} fetch failed:`, localErr);
-                data = [];
-            }
+            data = [];
         }
     }
     return data || [];
@@ -243,15 +231,6 @@ app.get('/api/settings', async (req, res) => {
         if (FALLBACK_DATA.settings) {
             data = FALLBACK_DATA.settings;
         }
-
-        try {
-            const fs = require('fs');
-            const path = require('path');
-            const filePath = path.join(__dirname, 'data', 'settings.json');
-            if (fs.existsSync(filePath)) {
-                data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-            }
-        } catch (e) { }
     }
 
     if (error && error.code !== 'PGRST116' && error.message !== 'Supabase not configured') return res.status(500).json(error);
@@ -283,14 +262,6 @@ app.get('/api/dashboard/stats', async (req, res) => {
 
     // Get settings safely
     let settings = FALLBACK_DATA.settings || {};
-    try {
-        const fs = require('fs');
-        const path = require('path');
-        const filePath = path.join(__dirname, 'data', 'settings.json');
-        if (fs.existsSync(filePath)) {
-            settings = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        }
-    } catch (e) { }
 
 
     const parsePrice = (priceStr) => {
@@ -350,18 +321,7 @@ app.post('/api/auth/login', async (req, res) => {
         }
 
         if (!user) {
-            try {
-                const fs = require('fs');
-                const path = require('path');
-                const usersPath = path.join(__dirname, 'data', 'users.json');
-
-                if (fs.existsSync(usersPath)) {
-                    const users = JSON.parse(fs.readFileSync(usersPath, 'utf8'));
-                    user = users.find(u => u.email === email && u.password === password);
-                }
-            } catch (localErr) {
-                console.error('Local auth failed:', localErr);
-            }
+            // No user found in Supabase or memory fallback
         }
     }
 
