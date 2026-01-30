@@ -26,6 +26,7 @@ supabase = {
     }
 };
 
+/*
 if (supabaseUrl && supabaseKey) {
     try {
         supabase = createClient(supabaseUrl, supabaseKey);
@@ -34,5 +35,6 @@ if (supabaseUrl && supabaseKey) {
         // supabase remains the mock object defined above
     }
 }
+*/
 
 module.exports = supabase;
