@@ -299,7 +299,7 @@ app.post('/api/auth/login', async (req, res) => {
     let error = null;
 
     try {
-        // Try Supabase first
+        // Try Supabase first if configured
         const result = await supabase
             .from('users')
             .select('*')
@@ -310,7 +310,10 @@ app.post('/api/auth/login', async (req, res) => {
         user = result.data;
         error = result.error;
     } catch (e) {
-        console.warn('Supabase auth failed, falling back to local:', e.message);
+        console.warn('Supabase auth failed (using fallback):', e.message);
+        // Do not throw, just ensure user is null so fallback triggers
+        user = null;
+        error = { message: 'Supabase not configured' };
     }
 
     // Fallback to local JSON if Supabase fails or isn't configured
