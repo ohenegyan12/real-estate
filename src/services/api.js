@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:5001/api'
+    : '/api';
 
 export const propertyService = {
     getAll: async () => {
