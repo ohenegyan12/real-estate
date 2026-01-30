@@ -9,24 +9,19 @@ let supabase;
 if (!supabaseUrl || !supabaseKey) {
     console.warn('⚠️ Supabase URL or Key is missing. Check your backend/.env file.');
     // Create a dummy client that warns when used instead of crashing the server startup
+    const mockBuilder = {
+        select: () => mockBuilder,
+        order: () => ({ data: [], error: { message: 'Supabase not configured' } }),
+        eq: () => mockBuilder,
+        single: () => ({ error: { message: 'Supabase not configured' } }),
+        insert: () => mockBuilder,
+        update: () => mockBuilder,
+        delete: () => mockBuilder,
+        limit: () => ({ data: [], error: { message: 'Supabase not configured' } })
+    };
+
     supabase = {
-        from: () => ({
-            select: () => ({
-                eq: () => ({
-                    single: () => ({ error: { message: 'Supabase not configured' } }),
-                    order: () => ({ data: [], error: { message: 'Supabase not configured' } })
-                }),
-                order: () => ({ data: [], error: { message: 'Supabase not configured' } }),
-                single: () => ({ error: { message: 'Supabase not configured' } }),
-                insert: () => ({ select: () => ({ single: () => ({ error: { message: 'Supabase not configured' } }) }) }),
-                update: () => ({ eq: () => ({ select: () => ({ single: () => ({ error: { message: 'Supabase not configured' } }) }) }) }),
-                delete: () => ({ eq: () => ({ error: { message: 'Supabase not configured' } }) }),
-                limit: () => ({ data: [], error: { message: 'Supabase not configured' } })
-            }),
-            insert: () => ({ select: () => ({ single: () => ({ error: { message: 'Supabase not configured' } }) }) }),
-            update: () => ({ eq: () => ({ select: () => ({ single: () => ({ error: { message: 'Supabase not configured' } }) }) }) }),
-            delete: () => ({ eq: () => ({ error: { message: 'Supabase not configured' } }) })
-        }),
+        from: () => mockBuilder,
         storage: {
             from: () => ({
                 upload: () => ({ error: { message: 'Supabase not configured' } }),
