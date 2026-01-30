@@ -1,8 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const multer = require('multer');
-const supabase = require('./supabase');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import multer from 'multer';
+import supabase from './supabase.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -373,4 +374,4 @@ if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => console.log(`Server on ${PORT}`));
 }
 
-module.exports = app;
+export default app;

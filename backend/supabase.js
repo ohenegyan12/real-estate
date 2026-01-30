@@ -1,5 +1,6 @@
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config();
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
@@ -16,7 +17,7 @@ const mockBuilder = {
     limit: () => ({ data: [], error: { message: 'Supabase not configured' } })
 };
 
-supabase = {
+let supabase = {
     from: () => mockBuilder,
     storage: {
         from: () => ({
@@ -26,7 +27,6 @@ supabase = {
     }
 };
 
-/*
 if (supabaseUrl && supabaseKey) {
     try {
         supabase = createClient(supabaseUrl, supabaseKey);
@@ -35,6 +35,5 @@ if (supabaseUrl && supabaseKey) {
         // supabase remains the mock object defined above
     }
 }
-*/
 
-module.exports = supabase;
+export default supabase;
