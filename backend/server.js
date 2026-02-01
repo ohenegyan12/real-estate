@@ -4,6 +4,13 @@ import multer from 'multer';
 import supabase from './supabase.js';
 import dotenv from 'dotenv';
 dotenv.config();
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DATA_DIR = path.join(__dirname, 'data');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -38,6 +45,26 @@ const FALLBACK_DATA = {
 };
 
 // Helper to get data with cleanup
+const readJsonData = async (filename) => {
+    try {
+        const filePath = path.join(DATA_DIR, filename);
+        const data = await fs.readFile(filePath, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        // If file doesn't exist or error, return null to fallback or empty array
+        return null;
+    }
+};
+
+const writeJsonData = async (filename, data) => {
+    try {
+        const filePath = path.join(DATA_DIR, filename);
+        await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+    } catch (error) {
+        console.error(`Error writing to ${filename}:`, error);
+    }
+};
+
 const getDataWithFallback = async (table, mockFile) => {
     let data = [];
     let error = null;
@@ -51,8 +78,17 @@ const getDataWithFallback = async (table, mockFile) => {
     }
 
     if (!data || (error && error.message === 'Supabase not configured')) {
-        // Use hardcoded fallback first (safer for Vercel)
-        if (FALLBACK_DATA[table]) {
+        // Try reading from file first
+        if (mockFile) {
+            const fileData = await readJsonData(mockFile);
+            if (fileData) {
+                data = fileData;
+            } else if (FALLBACK_DATA[table]) {
+                data = FALLBACK_DATA[table];
+            } else {
+                data = [];
+            }
+        } else if (FALLBACK_DATA[table]) {
             data = FALLBACK_DATA[table];
         } else {
             data = [];
@@ -101,8 +137,12 @@ app.post('/api/properties', async (req, res) => {
             .select()
             .single();
 
-        if (error && error.message === 'Supabase not configured') {
-            // Add to memory fallback so it shows up in the list
+        if (error || !sbData) {
+            if (error && error.message !== 'Supabase not configured') {
+                console.error('Supabase error:', error);
+            }
+
+            // Fallback to file system
             const newProp = {
                 id: Date.now(),
                 ...req.body,
@@ -110,23 +150,17 @@ app.post('/api/properties', async (req, res) => {
                 created_at: new Date().toISOString(),
                 status: 'Active'
             };
+
+            const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
+            const updatedProps = [newProp, ...currentProps];
+
+            await writeJsonData('properties.json', updatedProps);
+
+            // Also update memory fallback
             if (FALLBACK_DATA.properties) {
                 FALLBACK_DATA.properties.unshift(newProp);
             }
-            return res.status(201).json(newProp);
-        } else if (error) {
-            console.error('Supabase error:', error);
-            // If actual database error, try fallback anyway to keep app usable
-            const newProp = {
-                id: Date.now(),
-                ...req.body,
-                currency: 'GH₵',
-                created_at: new Date().toISOString(),
-                status: 'Active'
-            };
-            if (FALLBACK_DATA.properties) {
-                FALLBACK_DATA.properties.unshift(newProp);
-            }
+
             return res.status(201).json(newProp);
         }
 
@@ -147,9 +181,32 @@ app.put('/api/properties/:id', async (req, res) => {
         .select()
         .single();
 
-    if (error && error.message === 'Supabase not configured') {
-        return res.json({ ...req.body, id });
+    if (error || !data) {
+        if (error && error.message !== 'Supabase not configured') {
+            console.error('Supabase update error:', error);
+        }
+
+        // File system fallback
+        const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
+        const index = currentProps.findIndex(p => p.id == id);
+
+        if (index !== -1) {
+            const updatedProp = { ...currentProps[index], ...req.body };
+            currentProps[index] = updatedProp;
+
+            await writeJsonData('properties.json', currentProps);
+
+            // Update memory
+            if (FALLBACK_DATA.properties) {
+                FALLBACK_DATA.properties = currentProps;
+            }
+
+            return res.json(updatedProp);
+        }
+
+        return res.status(404).json({ message: 'Property not found in local storage' });
     }
+
     if (error) return res.status(500).json(error);
     res.json(data);
 });
@@ -164,8 +221,30 @@ app.patch('/api/properties/:id/status', async (req, res) => {
         .select()
         .single();
 
-    if (error && error.message === 'Supabase not configured') {
-        return res.json({ id, status });
+    if (error || !data) {
+        if (error && error.message !== 'Supabase not configured') {
+            console.error('Supabase status update error:', error);
+        }
+
+        // File system fallback
+        const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
+        const index = currentProps.findIndex(p => p.id == id);
+
+        if (index !== -1) {
+            const updatedProp = { ...currentProps[index], status };
+            currentProps[index] = updatedProp;
+
+            await writeJsonData('properties.json', currentProps);
+
+            // Update memory
+            if (FALLBACK_DATA.properties) {
+                FALLBACK_DATA.properties = currentProps;
+            }
+
+            return res.json(updatedProp);
+        }
+
+        return res.status(404).json({ message: 'Property not found in local storage' });
     }
 
     if (error) return res.status(500).json(error);
@@ -180,6 +259,24 @@ app.delete('/api/properties/:id', async (req, res) => {
         .eq('id', id);
 
     if (error && error.message !== 'Supabase not configured') return res.status(500).json(error);
+
+    // File system fallback (always try to delete from local file too, just in case)
+    try {
+        const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
+        const newProps = currentProps.filter(p => p.id != id);
+
+        if (currentProps.length !== newProps.length) {
+            await writeJsonData('properties.json', newProps);
+
+            // Update memory
+            if (FALLBACK_DATA.properties) {
+                FALLBACK_DATA.properties = newProps;
+            }
+        }
+    } catch (fsError) {
+        console.error('Error deleting from local storage:', fsError);
+    }
+
     res.json({ message: 'Property deleted' });
 });
 
