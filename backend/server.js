@@ -11,15 +11,20 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, 'data');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+
+// Ensure uploads directory exists
+await fs.mkdir(UPLOADS_DIR, { recursive: true });
 
 // Multer setup for temporary storage during upload
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Hardcoded fallback data for Vercel production (where fs is unreliable without config)
 const FALLBACK_DATA = {
@@ -470,28 +475,54 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
 
 // Upload to Supabase Storage
 app.post('/api/upload', upload.single('file'), async (req, res) => {
-    if (!req.file) return res.status(400).json({ message: 'No file' });
+    app.post('/api/upload', upload.single('file'), async (req, res) => {
+        if (!req.file) return res.status(400).json({ message: 'No file' });
 
-    const fileName = `${Date.now()}-${req.file.originalname}`;
-    const { data, error } = await supabase.storage
-        .from('property-images')
-        .upload(fileName, req.file.buffer, {
-            contentType: req.file.mimetype,
-            upsert: true
-        });
+        const fileName = `${Date.now()}-${req.file.originalname.replace(/\s+/g, '-')}`;
 
-    if (error) return res.status(500).json(error);
+        try {
+            // Try Supabase upload first
+            const { data, error } = await supabase.storage
+                .from('property-images')
+                .upload(fileName, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                    upsert: true
+                });
 
-    const { data: { publicUrl } } = supabase.storage
-        .from('property-images')
-        .getPublicUrl(fileName);
+            if (error) {
+                // If Supabase fails (e.g. not configured), throw to catch block for local fallback
+                throw error;
+            }
 
-    res.json({ url: publicUrl });
-});
+            const { data: { publicUrl } } = supabase.storage
+                .from('property-images')
+                .getPublicUrl(fileName);
 
-// Only listen if not running as a Vercel function
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => console.log(`Server on ${PORT}`));
-}
+            return res.json({ url: publicUrl });
 
-export default app;
+        } catch (error) {
+            console.warn('Supabase upload failed, falling back to local storage:', error.message);
+
+            try {
+                // Local file save fallback
+                const filePath = path.join(UPLOADS_DIR, fileName);
+                await fs.writeFile(filePath, req.file.buffer);
+
+                // Return local URL
+                // Assuming the frontend can access this via proxy or direct URL
+                // Since we added app.use('/uploads', ...), this is served at /uploads/filename
+                const localUrl = `/uploads/${fileName}`;
+                return res.json({ url: localUrl });
+            } catch (localError) {
+                console.error('Local upload failed:', localError);
+                return res.status(500).json({ message: 'File upload failed' });
+            }
+        }
+    });
+
+    // Only listen if not running as a Vercel function
+    if (process.env.NODE_ENV !== 'production') {
+        app.listen(PORT, () => console.log(`Server on ${PORT}`));
+    }
+
+    export default app;
