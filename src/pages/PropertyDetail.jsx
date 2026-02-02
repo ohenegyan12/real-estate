@@ -27,19 +27,19 @@ const PropertyDetail = () => {
                     // Normalize data structure for UI if needed
                     setProperty({
                         ...found,
-                        images: found.images || [found.image],
+                        images: (found.images && found.images.length > 0) ? found.images : (found.image ? [found.image] : ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80']),
                         reviews: found.reviews || 24,
                         rating: found.rating || 4.8,
-                        yearBuilt: found.yearBuilt || 2023,
+                        yearBuilt: found.yearBuilt || new Date().getFullYear(),
+                        sqft: found.sqft || found.size || 'N/A',
                         description: found.description || "No description provided.",
-                        amenities: found.amenities || [
-                            "Swimming Pool", "24/7 Security", "Backup Power", "Modern Kitchen", "Private Garden"
-                        ],
+                        amenities: found.amenities || [],
+                        // Default to company contact if specific agent not found
                         agent: found.agent || {
-                            name: "Kwame Mensah",
-                            role: "Senior Consultant",
-                            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop",
-                            phone: "+233 55 336 4848",
+                            name: "Owusu Homes Agent",
+                            role: "Sales Team",
+                            image: "https://images.unsplash.com/photo-1560250097-9b93dbd96cd8?q=80&w=250&auto=format&fit=crop", // Stock agent photo
+                            phone: "0553364848",
                             email: "owusuhomesgh@gmail.com"
                         }
                     });
@@ -288,32 +288,13 @@ const PropertyDetail = () => {
                             </div>
                         </div>
 
-                        {/* Location Map Placeholder */}
                         <div>
                             <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>
                                 Location
                             </h2>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', marginBottom: '1.5rem' }}>
-                                <MapPin size={20} color="var(--accent)" />
-                                <span>{property.address}</span>
-                            </div>
-                            <div style={{
-                                height: '400px',
-                                backgroundColor: '#f1f5f9',
-                                borderRadius: '24px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                position: 'relative',
-                                overflow: 'hidden'
-                            }}>
-                                {/* Map Background Image Placeholder */}
-                                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2674&auto=format&fit=crop" alt="Map" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5 }} />
-                                <div style={{ position: 'absolute', backgroundColor: 'white', padding: '1.5rem', borderRadius: '20px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', textAlign: 'center' }}>
-                                    <MapPin size={32} color="#ef4444" style={{ marginBottom: '0.5rem' }} />
-                                    <div style={{ fontWeight: '700', color: 'var(--primary)' }}>Property Location</div>
-                                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Accra, Ghana</div>
-                                </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '1.1rem' }}>
+                                <MapPin size={24} color="var(--accent)" />
+                                <span>{property.location}</span>
                             </div>
                         </div>
                     </div>

@@ -1,9 +1,17 @@
 const API_BASE_URL = '/api';
 
+const handleResponse = async (response) => {
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || data.error || 'API request failed');
+    }
+    return data;
+};
+
 export const propertyService = {
     getAll: async () => {
         const response = await fetch(`${API_BASE_URL}/properties`);
-        return response.json();
+        return handleResponse(response);
     },
     create: async (data) => {
         const response = await fetch(`${API_BASE_URL}/properties`, {
@@ -11,7 +19,7 @@ export const propertyService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        return response.json();
+        return handleResponse(response);
     },
     update: async (id, data) => {
         const response = await fetch(`${API_BASE_URL}/properties/${id}`, {
@@ -19,33 +27,33 @@ export const propertyService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        return response.json();
+        return handleResponse(response);
     },
     delete: async (id) => {
         const response = await fetch(`${API_BASE_URL}/properties/${id}`, {
             method: 'DELETE'
         });
-        return response.json();
+        return handleResponse(response);
     },
     getByCategory: async (type) => {
         const response = await fetch(`${API_BASE_URL}/properties/category/${type}`);
-        return response.json();
+        return handleResponse(response);
     },
     getTypes: async () => {
         const response = await fetch(`${API_BASE_URL}/types`);
-        return response.json();
+        return handleResponse(response);
     },
     getLocations: async () => {
         const response = await fetch(`${API_BASE_URL}/locations`);
-        return response.json();
+        return handleResponse(response);
     },
     getFeatured: async () => {
         const response = await fetch(`${API_BASE_URL}/properties/featured`);
-        return response.json();
+        return handleResponse(response);
     },
     getById: async (id) => {
         const response = await fetch(`${API_BASE_URL}/properties/${id}`);
-        return response.json();
+        return handleResponse(response);
     },
     updateStatus: async (id, status) => {
         const response = await fetch(`${API_BASE_URL}/properties/${id}/status`, {
@@ -53,21 +61,21 @@ export const propertyService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status })
         });
-        return response.json();
+        return handleResponse(response);
     }
 };
 
 export const categoryService = {
     getAll: async () => {
         const response = await fetch(`${API_BASE_URL}/categories`);
-        return response.json();
+        return handleResponse(response);
     }
 };
 
 export const settingsService = {
     get: async () => {
         const response = await fetch(`${API_BASE_URL}/settings`);
-        return response.json();
+        return handleResponse(response);
     },
     update: async (data) => {
         const response = await fetch(`${API_BASE_URL}/settings`, {
@@ -75,25 +83,25 @@ export const settingsService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        return response.json();
+        return handleResponse(response);
     }
 };
 
 export const statsService = {
     getDashboardStats: async () => {
         const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
-        return response.json();
+        return handleResponse(response);
     },
     getDashboardChart: async () => {
         const response = await fetch(`${API_BASE_URL}/dashboard/chart`);
-        return response.json();
+        return handleResponse(response);
     }
 };
 
 export const inquiryService = {
     getAll: async () => {
         const response = await fetch(`${API_BASE_URL}/inquiries`);
-        return response.json();
+        return handleResponse(response);
     },
     create: async (data) => {
         const response = await fetch(`${API_BASE_URL}/inquiries`, {
@@ -101,7 +109,7 @@ export const inquiryService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        return response.json();
+        return handleResponse(response);
     },
     update: async (id, status) => {
         const response = await fetch(`${API_BASE_URL}/inquiries/${id}`, {
@@ -109,13 +117,13 @@ export const inquiryService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status })
         });
-        return response.json();
+        return handleResponse(response);
     },
     delete: async (id) => {
         const response = await fetch(`${API_BASE_URL}/inquiries/${id}`, {
             method: 'DELETE'
         });
-        return response.json();
+        return handleResponse(response);
     }
 };
 
@@ -126,9 +134,7 @@ export const authService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(credentials)
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Login failed');
-        return data;
+        return handleResponse(response);
     },
     forgotPassword: async (email) => {
         const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
@@ -136,9 +142,7 @@ export const authService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Failed to send reset link');
-        return data;
+        return handleResponse(response);
     },
     resetPassword: async (email, newPassword) => {
         const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
@@ -146,13 +150,11 @@ export const authService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, newPassword })
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Reset failed');
-        return data;
+        return handleResponse(response);
     },
     verify: async () => {
         const response = await fetch(`${API_BASE_URL}/auth/verify`);
-        return response.json();
+        return handleResponse(response);
     },
     updateProfile: async (userData) => {
         const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
@@ -160,7 +162,7 @@ export const authService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData)
         });
-        return response.json();
+        return handleResponse(response);
     },
     changePassword: async (passwordData) => {
         const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
@@ -168,16 +170,14 @@ export const authService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(passwordData)
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Update failed');
-        return data;
+        return handleResponse(response);
     }
 };
 
 export const blogService = {
     getAll: async () => {
         const response = await fetch(`${API_BASE_URL}/posts`);
-        return response.json();
+        return handleResponse(response);
     }
 };
 
@@ -188,7 +188,7 @@ export const newsletterService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
-        return response.json();
+        return handleResponse(response);
     }
 };
 
@@ -200,6 +200,6 @@ export const mediaService = {
             method: 'POST',
             body: formData
         });
-        return response.json();
+        return handleResponse(response);
     }
 };

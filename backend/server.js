@@ -16,8 +16,9 @@ const UPLOADS_DIR = path.join(__dirname, 'uploads');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Ensure uploads directory exists
+// Ensure directories exist
 await fs.mkdir(UPLOADS_DIR, { recursive: true });
+await fs.mkdir(DATA_DIR, { recursive: true });
 
 // Multer setup for temporary storage during upload
 const upload = multer({ storage: multer.memoryStorage() });
@@ -71,35 +72,47 @@ const writeJsonData = async (filename, data) => {
 };
 
 const getDataWithFallback = async (table, mockFile) => {
-    let data = [];
+    let sbData = [];
+    let localData = [];
     let error = null;
 
+    // 1. Try Supabase
     try {
         const result = await supabase.from(table).select('*').order('id', { ascending: false });
-        data = result.data;
+        sbData = result.data || [];
         error = result.error;
     } catch (e) {
         console.warn(`Supabase ${table} fetch failed:`, e.message);
     }
 
-    if (!data || (error && error.message === 'Supabase not configured')) {
-        // Try reading from file first
-        if (mockFile) {
-            const fileData = await readJsonData(mockFile);
-            if (fileData) {
-                data = fileData;
-            } else if (FALLBACK_DATA[table]) {
-                data = FALLBACK_DATA[table];
-            } else {
-                data = [];
-            }
-        } else if (FALLBACK_DATA[table]) {
-            data = FALLBACK_DATA[table];
-        } else {
-            data = [];
-        }
+    // 2. Try Local File
+    if (mockFile) {
+        localData = await readJsonData(mockFile) || [];
+    } else if (FALLBACK_DATA[table]) {
+        localData = FALLBACK_DATA[table];
     }
-    return data || [];
+
+    // 3. Merge Strategies
+    // If Supabase completely failed (conn error), use local entirely
+    if (error && error.message === 'Supabase not configured') {
+        return localData.length > 0 ? localData : (FALLBACK_DATA[table] || []);
+    }
+
+    // Otherwise, merge properties. 
+    // We want to keep Supabase data, BUT also include Local items that are NOT in Supabase.
+    // This allows "local-only" items (failed uploads) to persist.
+
+    // Create a map by ID
+    const combined = new Map();
+
+    // Add Local first
+    localData.forEach(item => combined.set(String(item.id), item));
+
+    // Overwrite with Supabase (source of truth), UNLESS specific logic dictates otherwise
+    // For now, let's assume Supabase > Local for conflicts, but Local additions are kept.
+    sbData.forEach(item => combined.set(String(item.id), item));
+
+    return Array.from(combined.values()).sort((a, b) => b.id - a.id);
 };
 
 // Routes for Properties
@@ -142,34 +155,43 @@ app.post('/api/properties', async (req, res) => {
             .select()
             .single();
 
+        let finalProperty = sbData;
+
         if (error || !sbData) {
             if (error && error.message !== 'Supabase not configured') {
                 console.error('Supabase error:', error);
             }
 
             // Fallback to file system
-            const newProp = {
+            finalProperty = {
                 id: Date.now(),
                 ...req.body,
                 currency: 'GH₵',
                 created_at: new Date().toISOString(),
                 status: 'Active'
             };
-
-            const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
-            const updatedProps = [newProp, ...currentProps];
-
-            await writeJsonData('properties.json', updatedProps);
-
-            // Also update memory fallback
-            if (FALLBACK_DATA.properties) {
-                FALLBACK_DATA.properties.unshift(newProp);
-            }
-
-            return res.status(201).json(newProp);
         }
 
-        res.status(201).json(sbData);
+        // Always sync with local file system to ensure persistence
+        try {
+            const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
+            // Check for duplicates (if ID matches)
+            const exists = currentProps.some(p => p.id == finalProperty.id);
+
+            if (!exists) {
+                const updatedProps = [finalProperty, ...currentProps];
+                await writeJsonData('properties.json', updatedProps);
+
+                // Also update memory fallback
+                if (FALLBACK_DATA.properties) {
+                    FALLBACK_DATA.properties.unshift(finalProperty);
+                }
+            }
+        } catch (fsErr) {
+            console.error('Local sync error:', fsErr);
+        }
+
+        return res.status(201).json(finalProperty);
     } catch (err) {
         console.error('Server error adding property:', err);
         res.status(500).json({ message: 'Failed to add property' });
@@ -179,93 +201,112 @@ app.post('/api/properties', async (req, res) => {
 
 app.put('/api/properties/:id', async (req, res) => {
     const { id } = req.params;
-    const { data, error } = await supabase
-        .from('properties')
-        .update(req.body)
-        .eq('id', id)
-        .select()
-        .single();
+    let finalProperty = null;
 
-    if (error || !data) {
+    try {
+        const { data, error } = await supabase
+            .from('properties')
+            .update(req.body)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (data) finalProperty = data;
+
         if (error && error.message !== 'Supabase not configured') {
             console.error('Supabase update error:', error);
         }
+    } catch (e) { }
 
-        // File system fallback
+    // Sync/Fallback to local file
+    try {
         const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
         const index = currentProps.findIndex(p => p.id == id);
 
         if (index !== -1) {
             const updatedProp = { ...currentProps[index], ...req.body };
-            currentProps[index] = updatedProp;
+
+            // If Supabase gave us fresh data, use it, otherwise use local update
+            if (finalProperty) {
+                currentProps[index] = finalProperty;
+            } else {
+                currentProps[index] = updatedProp;
+                finalProperty = updatedProp;
+            }
 
             await writeJsonData('properties.json', currentProps);
 
-            // Update memory
             if (FALLBACK_DATA.properties) {
                 FALLBACK_DATA.properties = currentProps;
             }
-
-            return res.json(updatedProp);
         }
-
-        return res.status(404).json({ message: 'Property not found in local storage' });
+    } catch (fsErr) {
+        console.error('Local sync update error:', fsErr);
     }
 
-    if (error) return res.status(500).json(error);
-    res.json(data);
+    if (!finalProperty) {
+        // If neither worked, try to construct response from body + id, but usually local update handles it
+        // unless ID not found
+        return res.status(404).json({ message: 'Property not found' });
+    }
+
+    res.json(finalProperty);
 });
 
 app.patch('/api/properties/:id/status', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
-    const { data, error } = await supabase
-        .from('properties')
-        .update({ status })
-        .eq('id', id)
-        .select()
-        .single();
+    let finalProperty = null;
 
-    if (error || !data) {
-        if (error && error.message !== 'Supabase not configured') {
-            console.error('Supabase status update error:', error);
-        }
+    try {
+        const { data, error } = await supabase
+            .from('properties')
+            .update({ status })
+            .eq('id', id)
+            .select()
+            .single();
 
-        // File system fallback
+        if (data) finalProperty = data;
+    } catch (e) { }
+
+    // Sync local
+    try {
         const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
         const index = currentProps.findIndex(p => p.id == id);
 
         if (index !== -1) {
             const updatedProp = { ...currentProps[index], status };
-            currentProps[index] = updatedProp;
+
+            if (finalProperty) {
+                currentProps[index] = finalProperty;
+            } else {
+                currentProps[index] = updatedProp;
+                finalProperty = updatedProp;
+            }
 
             await writeJsonData('properties.json', currentProps);
 
-            // Update memory
             if (FALLBACK_DATA.properties) {
                 FALLBACK_DATA.properties = currentProps;
             }
-
-            return res.json(updatedProp);
         }
+    } catch (fsErr) { }
 
-        return res.status(404).json({ message: 'Property not found in local storage' });
-    }
-
-    if (error) return res.status(500).json(error);
-    res.json(data);
+    if (!finalProperty) return res.status(404).json({ message: 'Property not found' });
+    res.json(finalProperty);
 });
 
 app.delete('/api/properties/:id', async (req, res) => {
     const { id } = req.params;
-    const { error } = await supabase
-        .from('properties')
-        .delete()
-        .eq('id', id);
 
-    if (error && error.message !== 'Supabase not configured') return res.status(500).json(error);
+    try {
+        await supabase
+            .from('properties')
+            .delete()
+            .eq('id', id);
+    } catch (e) { }
 
-    // File system fallback (always try to delete from local file too, just in case)
+    // File system delete
     try {
         const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
         const newProps = currentProps.filter(p => p.id != id);

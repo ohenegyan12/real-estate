@@ -47,8 +47,22 @@ const ManageProperties = () => {
         image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80',
         images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80'],
         status: 'Active',
-        hasPaymentPlan: false
+        hasPaymentPlan: false,
+        agent: {
+            name: '',
+            role: 'Senior Agent',
+            phone: '',
+            email: '',
+            image: 'https://images.unsplash.com/photo-1560250097-9b93dbd96cd8?q=80&w=250&auto=format&fit=crop'
+        }
     });
+
+    const COMMON_AMENITIES = [
+        "Swimming Pool", "24/7 Security", "Backup Power", "Modern Kitchen",
+        "Private Garden", "Gym", "Garage", "Air Conditioning", "Water Heater"
+    ];
+
+    const [customAmenity, setCustomAmenity] = useState('');
 
     const [properties, setProperties] = useState([]);
     const [newImageUrl, setNewImageUrl] = useState('');
@@ -74,6 +88,37 @@ const ManageProperties = () => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+    };
+
+    const handleAgentChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            agent: {
+                ...prev.agent || {},
+                [name]: value
+            }
+        }));
+    };
+
+    const handleAmenityToggle = (amenity) => {
+        setFormData(prev => {
+            const current = prev.amenities || [];
+            if (current.includes(amenity)) {
+                return { ...prev, amenities: current.filter(a => a !== amenity) };
+            } else {
+                return { ...prev, amenities: [...current, amenity] };
+            }
+        });
+    };
+
+    const addCustomAmenity = () => {
+        if (!customAmenity) return;
+        setFormData(prev => ({
+            ...prev,
+            amenities: [...(prev.amenities || []), customAmenity]
+        }));
+        setCustomAmenity('');
     };
 
     const addImage = () => {
@@ -104,14 +149,18 @@ const ManageProperties = () => {
         setUploading(true);
         try {
             const data = await mediaService.upload(file);
-            setFormData(prev => ({
-                ...prev,
-                images: [...prev.images, data.url],
-                image: prev.images.length === 0 ? data.url : prev.image
-            }));
+            if (data && data.url) {
+                setFormData(prev => ({
+                    ...prev,
+                    images: [...prev.images, data.url],
+                    image: prev.images.length === 0 ? data.url : prev.image
+                }));
+            } else {
+                throw new Error('Invalid response from server');
+            }
         } catch (error) {
             console.error('Upload failed:', error);
-            alert('Failed to upload image. Please try again.');
+            alert(`Failed to upload image: ${error.message}`);
         } finally {
             setUploading(false);
         }
@@ -131,7 +180,14 @@ const ManageProperties = () => {
             image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80',
             images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80'],
             status: 'Active',
-            hasPaymentPlan: false
+            hasPaymentPlan: false,
+            agent: {
+                name: '',
+                role: 'Senior Agent',
+                phone: '',
+                email: '',
+                image: 'https://images.unsplash.com/photo-1560250097-9b93dbd96cd8?q=80&w=250&auto=format&fit=crop'
+            }
         });
         setShowAddModal(true);
     };
@@ -139,7 +195,17 @@ const ManageProperties = () => {
     const handleEditClick = (prop) => {
         setIsEditing(true);
         setSelectedProperty(prop);
-        setFormData({ ...prop });
+        setFormData({
+            ...prop,
+            amenities: prop.amenities || [],
+            agent: prop.agent || {
+                name: '',
+                role: 'Senior Agent',
+                phone: '',
+                email: '',
+                image: 'https://images.unsplash.com/photo-1560250097-9b93dbd96cd8?q=80&w=250&auto=format&fit=crop'
+            }
+        });
         setShowAddModal(true);
     };
 
@@ -167,6 +233,7 @@ const ManageProperties = () => {
             setShowAddModal(false);
         } catch (error) {
             console.error('Error saving property:', error);
+            alert(`Failed to save property: ${error.message}`);
         }
     };
 
@@ -524,134 +591,234 @@ const ManageProperties = () => {
                                     </div>
                                 </div>
 
-                                {/* Right Column: Media & Description */}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                    <div>
-                                        <h3 style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '1rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Media & Description</h3>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                                            <div>
-                                                <label className="admin-label">Description</label>
-                                                <textarea
-                                                    rows="4"
-                                                    name="description"
-                                                    value={formData.description}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Describe the key features and amenities..."
-                                                    className="admin-input"
-                                                    style={{ height: 'auto', resize: 'none' }}
-                                                ></textarea>
+                                <div>
+                                    <h3 style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '1rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Amenities</h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
+                                        {COMMON_AMENITIES.map(item => (
+                                            <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    id={`amenity-${item}`}
+                                                    checked={(formData.amenities || []).includes(item)}
+                                                    onChange={() => handleAmenityToggle(item)}
+                                                    style={{ width: '16px', height: '16px', accentColor: 'var(--accent)' }}
+                                                />
+                                                <label htmlFor={`amenity-${item}`} style={{ cursor: 'pointer', color: '#475569' }}>{item}</label>
                                             </div>
-                                            <div>
-                                                <label className="admin-label">Property Gallery</label>
+                                        ))}
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="Add custom amenity..."
+                                            value={customAmenity}
+                                            onChange={(e) => setCustomAmenity(e.target.value)}
+                                            className="admin-input"
+                                            style={{ fontSize: '0.85rem' }}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomAmenity(); } }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={addCustomAmenity}
+                                            style={{ padding: '0 1rem', borderRadius: '12px', backgroundColor: '#f1f5f9', color: '#64748b', fontWeight: '600', border: 'none', fontSize: '0.8rem' }}
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                    {(formData.amenities || []).filter(a => !COMMON_AMENITIES.includes(a)).length > 0 && (
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.75rem' }}>
+                                            {(formData.amenities || []).filter(a => !COMMON_AMENITIES.includes(a)).map((item, idx) => (
+                                                <span key={idx} style={{ padding: '0.25rem 0.75rem', backgroundColor: '#e2e8f0', borderRadius: '50px', fontSize: '0.8rem', color: '#475569', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                    {item}
+                                                    <button type="button" onClick={() => handleAmenityToggle(item)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 0, display: 'flex' }}><X size={12} /></button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
 
-                                                {/* Dropzone Style Upload */}
-                                                <div
-                                                    onClick={() => document.getElementById('fileUpload').click()}
-                                                    style={{
-                                                        border: '2px dashed #cbd5e1',
-                                                        borderRadius: '16px',
-                                                        padding: '2rem',
-                                                        textAlign: 'center',
-                                                        backgroundColor: '#f8fafc',
-                                                        cursor: uploading ? 'not-allowed' : 'pointer',
-                                                        transition: 'all 0.3s ease',
-                                                        marginBottom: '1.5rem',
-                                                        opacity: uploading ? 0.6 : 1
-                                                    }}
-                                                    onMouseOver={(e) => !uploading && (e.currentTarget.style.borderColor = 'var(--accent)')}
-                                                    onMouseOut={(e) => !uploading && (e.currentTarget.style.borderColor = '#cbd5e1')}
-                                                >
-                                                    <input
-                                                        type="file"
-                                                        id="fileUpload"
-                                                        hidden
-                                                        accept="image/*"
-                                                        onChange={handleFileUpload}
-                                                        disabled={uploading}
-                                                    />
-                                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
-                                                        <div style={{
-                                                            width: '48px',
-                                                            height: '48px',
-                                                            borderRadius: '50%',
-                                                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                                                            color: 'var(--accent)',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center'
-                                                        }}>
-                                                            {uploading ? (
-                                                                <div className="spinner" style={{ width: '24px', height: '24px', border: '3px solid rgba(37,99,235,0.1)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-                                                            ) : (
-                                                                <Upload size={24} />
-                                                            )}
+                            {/* Right Column: Media & Description */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                <div>
+                                    <h3 style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '1rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Media & Description</h3>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                        <div>
+                                            <label className="admin-label">Description</label>
+                                            <textarea
+                                                rows="4"
+                                                name="description"
+                                                value={formData.description}
+                                                onChange={handleInputChange}
+                                                placeholder="Describe the key features and amenities..."
+                                                className="admin-input"
+                                                style={{ height: 'auto', resize: 'none' }}
+                                            ></textarea>
+                                        </div>
+                                        <div>
+                                            <label className="admin-label">Property Gallery</label>
+
+                                            {/* Dropzone Style Upload */}
+                                            <div
+                                                onClick={() => document.getElementById('fileUpload').click()}
+                                                style={{
+                                                    border: '2px dashed #cbd5e1',
+                                                    borderRadius: '16px',
+                                                    padding: '2rem',
+                                                    textAlign: 'center',
+                                                    backgroundColor: '#f8fafc',
+                                                    cursor: uploading ? 'not-allowed' : 'pointer',
+                                                    transition: 'all 0.3s ease',
+                                                    marginBottom: '1.5rem',
+                                                    opacity: uploading ? 0.6 : 1
+                                                }}
+                                                onMouseOver={(e) => !uploading && (e.currentTarget.style.borderColor = 'var(--accent)')}
+                                                onMouseOut={(e) => !uploading && (e.currentTarget.style.borderColor = '#cbd5e1')}
+                                            >
+                                                <input
+                                                    type="file"
+                                                    id="fileUpload"
+                                                    hidden
+                                                    accept="image/*"
+                                                    onChange={handleFileUpload}
+                                                    disabled={uploading}
+                                                />
+                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                                                    <div style={{
+                                                        width: '48px',
+                                                        height: '48px',
+                                                        borderRadius: '50%',
+                                                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                                        color: 'var(--accent)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }}>
+                                                        {uploading ? (
+                                                            <div className="spinner" style={{ width: '24px', height: '24px', border: '3px solid rgba(37,99,235,0.1)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                                        ) : (
+                                                            <Upload size={24} />
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.95rem' }}>
+                                                            {uploading ? 'Uploading Image...' : 'Click to upload or drag and drop'}
                                                         </div>
-                                                        <div>
-                                                            <div style={{ fontWeight: '700', color: 'var(--primary)', fontSize: '0.95rem' }}>
-                                                                {uploading ? 'Uploading Image...' : 'Click to upload or drag and drop'}
-                                                            </div>
-                                                            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
-                                                                PNG, JPG or WEBP (Max. 5MB)
-                                                            </div>
+                                                        <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
+                                                            PNG, JPG or WEBP (Max. 5MB)
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                {/* Manual URL Input (as fallback) */}
-                                                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                                                    <input
-                                                        type="text"
-                                                        className="admin-input"
-                                                        placeholder="Or paste image URL here..."
-                                                        value={newImageUrl}
-                                                        onChange={(e) => setNewImageUrl(e.target.value)}
-                                                        style={{ fontSize: '0.85rem' }}
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={addImage}
-                                                        style={{ padding: '0 1.25rem', borderRadius: '12px', backgroundColor: 'var(--primary)', color: 'white', fontWeight: '700', border: 'none', fontSize: '0.85rem' }}
-                                                    >
-                                                        Add Link
-                                                    </button>
-                                                </div>
-
-                                                {/* Gallery Preview */}
-                                                <div style={{
-                                                    display: 'grid',
-                                                    gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
-                                                    gap: '0.75rem',
-                                                    padding: '1rem',
-                                                    backgroundColor: '#f8fafc',
-                                                    borderRadius: '16px',
-                                                    border: '1px solid #e2e8f0'
-                                                }}>
-                                                    {formData.images?.map((url, idx) => (
-                                                        <div key={idx} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', height: '80px', border: '2px solid white', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-                                                            <img src={url} alt={`Property ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => removeImage(idx)}
-                                                                style={{ position: 'absolute', top: '2px', right: '2px', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '10px' }}
-                                                            >
-                                                                <X size={12} />
-                                                            </button>
-                                                        </div>
-                                                    ))}
-                                                    {formData.images?.length === 0 && (
-                                                        <div style={{ gridColumn: '1/-1', textAlign: 'center', color: '#94a3b8', fontSize: '0.8rem', padding: '1.5rem' }}>
-                                                            No images added yet. Click above to upload.
-                                                        </div>
-                                                    )}
-                                                </div>
                                             </div>
 
-                                            <style>{`
+                                            {/* Manual URL Input (as fallback) */}
+                                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                                                <input
+                                                    type="text"
+                                                    className="admin-input"
+                                                    placeholder="Or paste image URL here..."
+                                                    value={newImageUrl}
+                                                    onChange={(e) => setNewImageUrl(e.target.value)}
+                                                    style={{ fontSize: '0.85rem' }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={addImage}
+                                                    style={{ padding: '0 1.25rem', borderRadius: '12px', backgroundColor: 'var(--primary)', color: 'white', fontWeight: '700', border: 'none', fontSize: '0.85rem' }}
+                                                >
+                                                    Add Link
+                                                </button>
+                                            </div>
+
+                                            {/* Gallery Preview */}
+                                            <div style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+                                                gap: '0.75rem',
+                                                padding: '1rem',
+                                                backgroundColor: '#f8fafc',
+                                                borderRadius: '16px',
+                                                border: '1px solid #e2e8f0'
+                                            }}>
+                                                {formData.images?.map((url, idx) => (
+                                                    <div key={idx} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', height: '80px', border: '2px solid white', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                                                        <img src={url} alt={`Property ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeImage(idx)}
+                                                            style={{ position: 'absolute', top: '2px', right: '2px', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '10px' }}
+                                                        >
+                                                            <X size={12} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                                {formData.images?.length === 0 && (
+                                                    <div style={{ gridColumn: '1/-1', textAlign: 'center', color: '#94a3b8', fontSize: '0.8rem', padding: '1.5rem' }}>
+                                                        No images added yet. Click above to upload.
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h3 style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '1rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Agent Information</h3>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                    <div>
+                                                        <label className="admin-label">Agent Name</label>
+                                                        <input
+                                                            type="text"
+                                                            name="name"
+                                                            value={formData.agent?.name || ''}
+                                                            onChange={handleAgentChange}
+                                                            placeholder="John Doe"
+                                                            className="admin-input"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="admin-label">Role</label>
+                                                        <input
+                                                            type="text"
+                                                            name="role"
+                                                            value={formData.agent?.role || ''}
+                                                            onChange={handleAgentChange}
+                                                            placeholder="Sales Manager"
+                                                            className="admin-input"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                    <div>
+                                                        <label className="admin-label">Phone</label>
+                                                        <input
+                                                            type="text"
+                                                            name="phone"
+                                                            value={formData.agent?.phone || ''}
+                                                            onChange={handleAgentChange}
+                                                            placeholder="055..."
+                                                            className="admin-input"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="admin-label">Email</label>
+                                                        <input
+                                                            type="email"
+                                                            name="email"
+                                                            value={formData.agent?.email || ''}
+                                                            onChange={handleAgentChange}
+                                                            placeholder="agent@example.com"
+                                                            className="admin-input"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <style>{`
                                                 @keyframes spin {
                                                     to { transform: rotate(360deg); }
                                                 }
                                             `}</style>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

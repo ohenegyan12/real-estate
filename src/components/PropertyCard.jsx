@@ -169,7 +169,7 @@ const PropertyCard = ({ property }) => {
                             <div style={{ backgroundColor: '#eff6ff', padding: '6px', borderRadius: '8px', display: 'flex' }}>
                                 <Square size={16} color="var(--accent)" />
                             </div>
-                            <span>{property.sqft} <span style={{ color: '#94a3b8', fontWeight: '500' }}>sqft</span></span>
+                            <span>{property.sqft || property.size || 'N/A'} <span style={{ color: '#94a3b8', fontWeight: '500' }}>sqft</span></span>
                         </div>
                     </div>
                 </div>
