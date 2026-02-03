@@ -23,7 +23,7 @@ const Footer = () => {
                 <div style={{ flex: '1 1 300px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', fontWeight: '800', marginBottom: '1.5rem', color: 'var(--accent)' }}>
                         <img src="/logo.jpeg" alt="Owusu Homes Logo" style={{ height: '32px', width: '32px', objectFit: 'cover', borderRadius: '50%' }} />
-                        <span>Owusu Homes</span>
+                        <span style={{ color: 'white' }}>Owusu Homes</span>
                     </div>
                     <p style={{ color: '#aaa', lineHeight: 1.8 }}>
                         Your gateway to exceptional living. We connect you with the most desired real estate properties and investment opportunities.
