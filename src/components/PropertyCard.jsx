@@ -38,8 +38,8 @@ const PropertyCard = ({ property }) => {
                         onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                     />
 
-                    {/* Tags Layer */}
-                    <div style={{ position: 'absolute', top: '1.25rem', left: '1.25rem', display: 'flex', gap: '0.5rem', zIndex: 2 }}>
+                    {/* Tags Layer - Left Side (Status) */}
+                    <div style={{ position: 'absolute', top: '1.25rem', left: '1.25rem', zIndex: 2 }}>
                         <span style={{
                             backgroundColor: property.status === 'For Rent' ? 'rgba(255, 140, 0, 0.95)' : 'rgba(37, 99, 235, 0.95)',
                             color: 'white',
@@ -53,7 +53,11 @@ const PropertyCard = ({ property }) => {
                         }}>
                             {property.status}
                         </span>
-                        {property.isNew && (
+                    </div>
+
+                    {/* Tags Layer - Right Side (New) */}
+                    {property.isNew && (
+                        <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem', zIndex: 2 }}>
                             <span style={{
                                 backgroundColor: 'rgba(16, 185, 129, 0.95)',
                                 color: 'white',
@@ -67,10 +71,10 @@ const PropertyCard = ({ property }) => {
                             }}>
                                 New
                             </span>
-                        )}
-                    </div>
+                        </div>
+                    )}
 
-                    {/* Gradient Overlay for info/favorite toggle visibility */}
+                    {/* Gradient Overlay */}
                     <div style={{
                         position: 'absolute',
                         bottom: 0,
@@ -81,10 +85,10 @@ const PropertyCard = ({ property }) => {
                         pointerEvents: 'none'
                     }} />
 
-                    {/* Favorite Button */}
+                    {/* Favorite Button - Shifted Down */}
                     <button style={{
                         position: 'absolute',
-                        top: '1.25rem',
+                        top: property.isNew ? '3.5rem' : '1.25rem', // Shift down if "New" badge exists
                         right: '1.25rem',
                         width: '42px',
                         height: '42px',
