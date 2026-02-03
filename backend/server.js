@@ -365,23 +365,55 @@ app.get('/api/inquiries', async (req, res) => {
 });
 
 app.post('/api/inquiries', async (req, res) => {
-    const { data, error } = await supabase
-        .from('inquiries')
-        .insert([{ ...req.body, status: 'New' }])
-        .select()
-        .single();
+    let finalInquiry = null;
 
-    if (error && error.message === 'Supabase not configured') {
-        return res.status(201).json({ id: Date.now(), ...req.body, status: 'New' });
+    try {
+        const { data, error } = await supabase
+            .from('inquiries')
+            .insert([{ ...req.body, status: 'New' }])
+            .select()
+            .single();
+
+        if (data) finalInquiry = data;
+
+        if (error && error.message !== 'Supabase not configured') {
+            console.error('Supabase error:', error);
+        }
+    } catch (e) { }
+
+    if (!finalInquiry) {
+        finalInquiry = { id: Date.now(), ...req.body, status: 'New', date: new Date().toISOString() };
     }
-    if (error) return res.status(500).json(error);
-    res.status(201).json(data);
+
+    // Persist locally
+    try {
+        const currentInquiries = await readJsonData('inquiries.json') || FALLBACK_DATA.inquiries || [];
+        const updatedInquiries = [finalInquiry, ...currentInquiries];
+        await writeJsonData('inquiries.json', updatedInquiries);
+        if (FALLBACK_DATA.inquiries) FALLBACK_DATA.inquiries = updatedInquiries;
+    } catch (fsErr) {
+        console.error('Local inquiries sync error:', fsErr);
+    }
+
+    res.status(201).json(finalInquiry);
 });
 
 app.delete('/api/inquiries/:id', async (req, res) => {
     const { id } = req.params;
-    const { error } = await supabase.from('inquiries').delete().eq('id', id);
-    if (error && error.message !== 'Supabase not configured') return res.status(500).json(error);
+    try {
+        await supabase.from('inquiries').delete().eq('id', id);
+    } catch (e) { }
+
+    // Local delete
+    try {
+        const currentInquiries = await readJsonData('inquiries.json') || FALLBACK_DATA.inquiries || [];
+        const updated = currentInquiries.filter(i => i.id != id);
+        if (updated.length !== currentInquiries.length) {
+            await writeJsonData('inquiries.json', updated);
+            if (FALLBACK_DATA.inquiries) FALLBACK_DATA.inquiries = updated;
+        }
+    } catch (e) { }
+
     res.json({ message: 'Inquiry deleted' });
 });
 
@@ -395,31 +427,54 @@ app.get('/api/settings', async (req, res) => {
     } catch (e) { }
 
     if (!data || (error && error.message === 'Supabase not configured')) {
-        if (FALLBACK_DATA.settings) {
+        // Try local file
+        const localSettings = await readJsonData('settings.json');
+        if (localSettings) {
+            data = localSettings;
+        } else if (FALLBACK_DATA.settings) {
             data = FALLBACK_DATA.settings;
         }
     }
 
-    if (error && error.code !== 'PGRST116' && error.message !== 'Supabase not configured') return res.status(500).json(error);
     res.json(data || {});
 });
 
 app.put('/api/settings', async (req, res) => {
-    const { data: existing } = await supabase.from('settings').select('id').single();
+    let finalSettings = null;
 
-    let result = { data: null, error: null };
-    if (existing) {
-        result = await supabase.from('settings').update(req.body).eq('id', existing.id).select().single();
-    } else {
-        result = await supabase.from('settings').insert([req.body]).select().single();
+    try {
+        const { data: existing } = await supabase.from('settings').select('id').single();
+        let result = { data: null, error: null };
+        if (existing) {
+            result = await supabase.from('settings').update(req.body).eq('id', existing.id).select().single();
+        } else {
+            result = await supabase.from('settings').insert([req.body]).select().single();
+        }
+        if (result.data) finalSettings = result.data;
+    } catch (e) { }
+
+    // Fallback/Sync to local
+    if (!finalSettings) {
+        finalSettings = { ...req.body, updated_at: new Date().toISOString() };
     }
 
-    if (result.error && result.error.message === 'Supabase not configured') {
-        return res.json(req.body);
+    try {
+        // Here we just overwrite the settings.json since it's a single object (or maybe we should merge?)
+        // Merging is safer if partial updates sent, but typically settings UI sends whole object or we need to read first.
+        const currentSettings = await readJsonData('settings.json') || FALLBACK_DATA.settings || {};
+        const newSettings = { ...currentSettings, ...req.body };
+
+        await writeJsonData('settings.json', newSettings);
+        if (FALLBACK_DATA.settings) FALLBACK_DATA.settings = newSettings;
+
+        // If finalSettings was null (Supabase failed), return the merged local object
+        if (!finalSettings) finalSettings = newSettings;
+
+    } catch (fsErr) {
+        console.error('Local settings sync error:', fsErr);
     }
 
-    if (result.error) return res.status(500).json(result.error);
-    res.json(result.data);
+    res.json(finalSettings);
 });
 
 // Dashboard Stats
@@ -427,9 +482,8 @@ app.get('/api/dashboard/stats', async (req, res) => {
     const properties = await getDataWithFallback('properties', 'properties.json');
     const inquiries = await getDataWithFallback('inquiries', 'inquiries.json');
 
-    // Get settings safely
-    let settings = FALLBACK_DATA.settings || {};
-
+    // Get settings safely (try file first, then fallback)
+    let settings = await readJsonData('settings.json') || FALLBACK_DATA.settings || {};
 
     const parsePrice = (priceStr) => {
         if (!priceStr) return 0;
@@ -457,6 +511,21 @@ app.get('/api/dashboard/stats', async (req, res) => {
             revenue: "+15%"
         }
     });
+});
+
+app.get('/api/dashboard/chart', async (req, res) => {
+    // Return mock data for the chart
+    // In a real app, this would aggregate views/inquiries over time
+    const data = [
+        { name: 'Mon', views: 40, inquiries: 2 },
+        { name: 'Tue', views: 30, inquiries: 1 },
+        { name: 'Wed', views: 20, inquiries: 3 },
+        { name: 'Thu', views: 27, inquiries: 2 },
+        { name: 'Fri', views: 18, inquiries: 1 },
+        { name: 'Sat', views: 23, inquiries: 4 },
+        { name: 'Sun', views: 34, inquiries: 3 },
+    ];
+    res.json(data);
 });
 
 // Auth
@@ -541,10 +610,13 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         return res.json({ url: publicUrl });
 
     } catch (error) {
-        console.warn('Supabase upload failed, falling back to local storage:', error.message);
+        console.warn('Supabase upload failed, falling back to local/base64:', error.message);
 
         try {
             // Local file save fallback
+            // Note: This often fails in serverless environments (like Vercel) which are read-only
+
+            // Ensure directory exists (might fail if read-only)
             const filePath = path.join(UPLOADS_DIR, fileName);
             await fs.writeFile(filePath, req.file.buffer);
 
@@ -552,8 +624,14 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
             const localUrl = `/uploads/${fileName}`;
             return res.json({ url: localUrl });
         } catch (localError) {
-            console.error('Local upload failed:', localError);
-            return res.status(500).json({ message: 'File upload failed' });
+            console.warn('Local file write failed (likely read-only fs), returning Base64:', localError.message);
+
+            // Fallback: Return Base64 Data URI
+            // This allows the image to work in the frontend immediately without needing server storage
+            const b64 = Buffer.from(req.file.buffer).toString('base64');
+            const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+
+            return res.json({ url: dataURI });
         }
     }
 });
