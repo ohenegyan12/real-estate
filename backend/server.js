@@ -205,21 +205,28 @@ app.put('/api/properties/:id', async (req, res) => {
     let finalProperty = null;
 
     try {
+        // Clean the body: Remove ID and Created At to avoid DB errors
+        const { id: _id, created_at: _created, ...updateData } = req.body;
+
         const { data, error } = await supabase
             .from('properties')
-            .update(req.body)
+            .update(updateData)
             .eq('id', id)
             .select()
             .single();
 
-        if (data) finalProperty = data;
-
-        if (error && error.message !== 'Supabase not configured') {
+        if (error) {
             console.error('Supabase update error:', error);
+            // If Supabase fails, valid persistence failed. Don't fake it locally on Vercel.
+            if (error.code) return res.status(400).json({ message: error.message });
         }
-    } catch (e) { }
 
-    // Sync/Fallback to local file
+        if (data) finalProperty = data;
+    } catch (e) {
+        console.error("Unexpected error during update:", e);
+    }
+
+    // Sync/Fallback to local file (Only useful for local dev, useless on Vercel)
     try {
         const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
         const index = currentProps.findIndex(p => p.id == id);
@@ -227,7 +234,7 @@ app.put('/api/properties/:id', async (req, res) => {
         if (index !== -1) {
             const updatedProp = { ...currentProps[index], ...req.body };
 
-            // If Supabase gave us fresh data, use it, otherwise use local update
+            // Prefer Supabase data if available
             if (finalProperty) {
                 currentProps[index] = finalProperty;
             } else {
@@ -236,18 +243,11 @@ app.put('/api/properties/:id', async (req, res) => {
             }
 
             await writeJsonData('properties.json', currentProps);
-
-            if (FALLBACK_DATA.properties) {
-                FALLBACK_DATA.properties = currentProps;
-            }
+            if (FALLBACK_DATA.properties) FALLBACK_DATA.properties = currentProps;
         }
-    } catch (fsErr) {
-        console.error('Local sync update error:', fsErr);
-    }
+    } catch (fsErr) { }
 
     if (!finalProperty) {
-        // If neither worked, try to construct response from body + id, but usually local update handles it
-        // unless ID not found
         return res.status(404).json({ message: 'Property not found' });
     }
 
@@ -267,29 +267,23 @@ app.patch('/api/properties/:id/status', async (req, res) => {
             .select()
             .single();
 
+        if (error) throw error;
         if (data) finalProperty = data;
-    } catch (e) { }
+    } catch (e) {
+        console.error('Status update error:', e);
+    }
 
     // Sync local
     try {
         const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
         const index = currentProps.findIndex(p => p.id == id);
-
         if (index !== -1) {
             const updatedProp = { ...currentProps[index], status };
-
-            if (finalProperty) {
-                currentProps[index] = finalProperty;
-            } else {
-                currentProps[index] = updatedProp;
-                finalProperty = updatedProp;
-            }
+            if (finalProperty) currentProps[index] = finalProperty;
+            else { currentProps[index] = updatedProp; finalProperty = updatedProp; }
 
             await writeJsonData('properties.json', currentProps);
-
-            if (FALLBACK_DATA.properties) {
-                FALLBACK_DATA.properties = currentProps;
-            }
+            if (FALLBACK_DATA.properties) FALLBACK_DATA.properties = currentProps;
         }
     } catch (fsErr) { }
 
@@ -301,31 +295,34 @@ app.delete('/api/properties/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        await supabase
+        const { error } = await supabase
             .from('properties')
             .delete()
             .eq('id', id);
-    } catch (e) { }
 
-    // File system delete
+        if (error) {
+            console.error('Supabase delete error:', error);
+            return res.status(400).json({ message: error.message });
+        }
+    } catch (e) {
+        return res.status(500).json({ message: 'Server error during delete' });
+    }
+
+    // File system delete (Local Dev only)
     try {
         const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
         const newProps = currentProps.filter(p => p.id != id);
 
         if (currentProps.length !== newProps.length) {
             await writeJsonData('properties.json', newProps);
-
-            // Update memory
-            if (FALLBACK_DATA.properties) {
-                FALLBACK_DATA.properties = newProps;
-            }
+            if (FALLBACK_DATA.properties) FALLBACK_DATA.properties = newProps;
         }
-    } catch (fsError) {
-        console.error('Error deleting from local storage:', fsError);
-    }
+    } catch (fsError) { }
 
     res.json({ message: 'Property deleted' });
 });
+
+
 
 // Category Routes
 app.get('/api/categories', async (req, res) => {
