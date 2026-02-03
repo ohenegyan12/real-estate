@@ -156,24 +156,15 @@ app.post('/api/properties', async (req, res) => {
             .select()
             .single();
 
-        let finalProperty = sbData;
-
-        if (error || !sbData) {
-            if (error && error.message !== 'Supabase not configured') {
-                console.error('Supabase error:', error);
-            }
-
-            // Fallback to file system
-            finalProperty = {
-                id: Date.now(),
-                ...req.body,
-                currency: 'GH₵',
-                created_at: new Date().toISOString(),
-                status: 'Active'
-            };
+        if (error) {
+            console.error('Supabase error:', error);
+            // Don't fallback on error, return the actual error so user knows it failed
+            return res.status(400).json({ message: error.message || 'Database error' });
         }
 
-        // Always sync with local file system to ensure persistence
+        let finalProperty = sbData;
+
+        // Sync with local file system if needed (for local dev)
         try {
             const currentProps = await readJsonData('properties.json') || FALLBACK_DATA.properties || [];
             // Check for duplicates (if ID matches)
