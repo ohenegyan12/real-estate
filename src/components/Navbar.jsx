@@ -58,7 +58,6 @@ const Navbar = () => {
 
                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                             <Link to="/login" style={{ fontWeight: '500' }}>Login</Link>
-                            <Link to="/signup" style={{ fontWeight: '500' }}>Sign Up</Link>
                         </div>
                     </div>
                 </div>
@@ -140,7 +139,6 @@ const Navbar = () => {
                         ))}
                         <div style={{ borderTop: '1px solid #eee', paddingTop: '1rem', marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <Link to="/login" style={{ color: 'var(--primary)', fontWeight: '500' }}>Login</Link>
-                            <Link to="/signup" style={{ color: 'var(--accent)', fontWeight: '700' }}>Sign Up</Link>
                         </div>
                     </div>
                 )}
