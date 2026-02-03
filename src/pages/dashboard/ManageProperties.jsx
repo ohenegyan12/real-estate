@@ -711,24 +711,7 @@ const ManageProperties = () => {
                                                 </div>
                                             </div>
 
-                                            {/* Manual URL Input (as fallback) */}
-                                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                                                <input
-                                                    type="text"
-                                                    className="admin-input"
-                                                    placeholder="Or paste image URL here..."
-                                                    value={newImageUrl}
-                                                    onChange={(e) => setNewImageUrl(e.target.value)}
-                                                    style={{ fontSize: '0.85rem' }}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={addImage}
-                                                    style={{ padding: '0 1.25rem', borderRadius: '12px', backgroundColor: 'var(--primary)', color: 'white', fontWeight: '700', border: 'none', fontSize: '0.85rem' }}
-                                                >
-                                                    Add Link
-                                                </button>
-                                            </div>
+
 
                                             {/* Gallery Preview */}
                                             <div style={{
@@ -761,55 +744,21 @@ const ManageProperties = () => {
                                         </div>
 
                                         <div>
-                                            <h3 style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '1rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Agent Information</h3>
+                                            <h3 style={{ fontSize: '0.9rem', fontWeight: '700', marginBottom: '1rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Agent Contact</h3>
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                                    <div>
-                                                        <label className="admin-label">Agent Name</label>
-                                                        <input
-                                                            type="text"
-                                                            name="name"
-                                                            value={formData.agent?.name || ''}
-                                                            onChange={handleAgentChange}
-                                                            placeholder="John Doe"
-                                                            className="admin-input"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="admin-label">Role</label>
-                                                        <input
-                                                            type="text"
-                                                            name="role"
-                                                            value={formData.agent?.role || ''}
-                                                            onChange={handleAgentChange}
-                                                            placeholder="Sales Manager"
-                                                            className="admin-input"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                                                    <div>
-                                                        <label className="admin-label">Phone</label>
-                                                        <input
-                                                            type="text"
-                                                            name="phone"
-                                                            value={formData.agent?.phone || ''}
-                                                            onChange={handleAgentChange}
-                                                            placeholder="055..."
-                                                            className="admin-input"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="admin-label">Email</label>
-                                                        <input
-                                                            type="email"
-                                                            name="email"
-                                                            value={formData.agent?.email || ''}
-                                                            onChange={handleAgentChange}
-                                                            placeholder="agent@example.com"
-                                                            className="admin-input"
-                                                        />
-                                                    </div>
+                                                <div>
+                                                    <label className="admin-label">Agent Phone Number</label>
+                                                    <input
+                                                        type="text"
+                                                        name="phone"
+                                                        value={formData.agent?.phone || ''}
+                                                        onChange={handleAgentChange}
+                                                        placeholder="055..."
+                                                        className="admin-input"
+                                                    />
+                                                    <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>
+                                                        This number will be used for the "Contact Agent" button.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>

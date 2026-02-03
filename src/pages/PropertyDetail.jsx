@@ -6,7 +6,7 @@ import { propertyService } from '../services/api';
 import {
     MapPin, Bed, Bath, Square, Star, Heart, Share2, Printer,
     CheckCircle2, Phone, Calendar, Mail, User, ShieldCheck,
-    ArrowRight, ChevronLeft, ChevronRight, Play, Maximize2
+    ArrowRight, ChevronLeft, ChevronRight, Play, Maximize2, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -61,445 +61,177 @@ const PropertyDetail = () => {
     const prevImage = () => setActiveImage((prev) => (prev - 1 + property.images.length) % property.images.length);
 
     return (
-        <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+        <div style={{ backgroundColor: 'white', minHeight: '100vh', paddingBottom: '4rem' }}>
             <Navbar />
 
-            {/* Breadcrumbs & Title Bar */}
-            <section style={{ padding: 'clamp(12rem, 15vh, 15rem) 0 2rem', backgroundColor: 'white', borderBottom: '1px solid #f1f5f9' }}>
-                <div className="container">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                        <Link to="/" style={{ color: '#64748b' }}>Home</Link>
-                        <span>/</span>
-                        <Link to="/properties" style={{ color: '#64748b' }}>Properties</Link>
-                        <span>/</span>
-                        <span style={{ color: 'var(--primary)', fontWeight: '600' }}>Property Detail</span>
-                    </div>
+            {/* Back Button */}
+            <div className="container" style={{ paddingTop: '8rem', paddingBottom: '1rem' }}>
+                <Link to="/properties" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.9rem', fontWeight: '500', width: 'fit-content' }}>
+                    <ChevronLeft size={18} /> Back to Properties
+                </Link>
+            </div>
 
-                    <div className="detail-title-flex">
-                        <div style={{ flex: 1, minWidth: '300px' }}>
-                            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
-                                <span style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '0.4rem 1rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: '700' }}>{property.status}</span>
-                                <span style={{ backgroundColor: '#f1f5f9', color: 'var(--primary)', padding: '0.4rem 1rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: '700' }}>{property.type}</span>
+            <div className="container" style={{ maxWidth: '1280px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '4rem' }} className="detail-grid">
+                    {/* Left Column: Image */}
+                    <div>
+                        <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '600px', backgroundColor: '#f1f5f9' }}>
+                            <img
+                                src={property.images[0]}
+                                alt={property.title}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                            {/* Badges */}
+                            <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem' }}>
+                                <span style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700' }}>
+                                    {property.status}
+                                </span>
                             </div>
-                            <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: '800', color: 'var(--primary)', marginBottom: '1rem', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
-                                {property.title || property.name}
-                            </h1>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#64748b', flexWrap: 'wrap' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <MapPin size={18} color="var(--accent)" />
-                                    <span>{property.location}</span>
-                                </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                    <Star size={18} fill="#f59e0b" color="#f59e0b" />
-                                    <span style={{ fontWeight: '700', color: 'var(--primary)' }}>{property.rating}</span>
-                                    <span>({property.reviews} Reviews)</span>
-                                </div>
+                            <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem' }}>
+                                <span style={{ backgroundColor: '#10b981', color: 'white', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '700' }}>
+                                    New
+                                </span>
                             </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)', fontWeight: '900', color: 'var(--primary)', letterSpacing: '-1px' }}>
+                    </div>
+
+                    {/* Right Column: Details */}
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f59e0b', fontWeight: '700', fontSize: '0.95rem', marginBottom: '0.5rem' }}>
+                            <Star size={18} fill="#f59e0b" /> {property.rating} Rating
+                        </div>
+
+                        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1a1a1a', lineHeight: '1.2', marginBottom: '1rem' }}>
+                            {property.title || property.name}
+                        </h1>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', marginBottom: '2rem' }}>
+                            <MapPin size={18} /> {property.location}
+                        </div>
+
+                        {/* Price Section */}
+                        <div style={{ marginBottom: '2.5rem' }}>
+                            <div style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--primary)', letterSpacing: '-0.5px' }}>
                                 {property.currency}{property.price.toLocaleString()}
                             </div>
-                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1rem' }} className="justify-end">
-                                <button style={{ width: '45px', height: '45px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', cursor: 'pointer' }}>
-                                    <Share2 size={20} color="#64748b" />
-                                </button>
-                                <button
-                                    onClick={() => setIsFavorite(!isFavorite)}
-                                    style={{ width: '45px', height: '45px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', cursor: 'pointer' }}
-                                >
-                                    <Heart size={20} fill={isFavorite ? "#ef4444" : "none"} color={isFavorite ? "#ef4444" : "#64748b"} />
-                                </button>
-                                <button style={{ width: '45px', height: '45px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white', cursor: 'pointer' }}>
-                                    <Printer size={20} color="#64748b" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Image Gallery */}
-            <section style={{ padding: '2rem 0' }}>
-                <style>{`
-                    .detail-title-flex {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: flex-end;
-                        flex-wrap: wrap;
-                        gap: 2rem;
-                    }
-                    .gallery-grid {
-                        display: grid;
-                        grid-template-columns: 2.3fr 1fr;
-                        gap: 1.5rem;
-                        height: 600px;
-                    }
-                    .detail-main-layout {
-                        display: grid;
-                        grid-template-columns: 2fr 1fr;
-                        gap: 3rem;
-                    }
-                    .stats-grid {
-                        display: grid;
-                        grid-template-columns: repeat(4, 1fr);
-                        gap: 1.5rem;
-                        background: white;
-                        padding: 2rem;
-                        border-radius: 24px;
-                        margin-bottom: 3rem;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-                    }
-                    @media (max-width: 1100px) {
-                        .gallery-grid {
-                            grid-template-columns: 1fr;
-                            height: auto;
-                        }
-                        .gallery-side-images {
-                            display: none !important;
-                        }
-                        .detail-main-layout {
-                            grid-template-columns: 1fr;
-                        }
-                    }
-                    @media (max-width: 768px) {
-                        .detail-title-flex {
-                            flex-direction: column;
-                            align-items: flex-start;
-                        }
-                        .detail-title-flex > div:last-child {
-                            text-align: left !important;
-                        }
-                        .detail-title-flex .justify-end {
-                            justify-content: flex-start !important;
-                        }
-                        .gallery-grid {
-                            height: 350px;
-                        }
-                        .stats-grid {
-                            grid-template-columns: repeat(2, 1fr);
-                            padding: 1.5rem;
-                            gap: 1rem;
-                        }
-                        .stats-grid > div {
-                            border-right: none !important;
-                            border-bottom: 1px solid #f1f5f9;
-                            padding-bottom: 1rem;
-                        }
-                        .stats-grid > div:nth-last-child(-n+2) {
-                            border-bottom: none;
-                            padding-bottom: 0;
-                            padding-top: 1rem;
-                        }
-                    }
-                `}</style>
-                <div className="container">
-                    <div className="gallery-grid">
-                        {/* Main Image */}
-                        <div style={{ position: 'relative', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
-                            <img src={property.images[activeImage]} alt="Main" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            <div style={{ position: 'absolute', bottom: '2rem', right: '2rem', display: 'flex', gap: '1rem' }}>
-                                <button onClick={prevImage} style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(10px)' }}>
-                                    <ChevronLeft size={24} color="var(--primary)" />
-                                </button>
-                                <button onClick={nextImage} style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(10px)' }}>
-                                    <ChevronRight size={24} color="var(--primary)" />
-                                </button>
-                            </div>
-                            <div style={{ position: 'absolute', top: '2rem', left: '2rem' }}>
-                                <button style={{ padding: '0.75rem 1.5rem', borderRadius: '50px', backgroundColor: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', backdropFilter: 'blur(10px)', fontWeight: '600' }}>
-                                    <Maximize2 size={18} /> View All Photos
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Side Images Grid */}
-                        <div className="gallery-side-images" style={{ display: 'grid', gridTemplateRows: '1fr 1fr', gap: '1.5rem' }}>
-                            <div style={{ borderRadius: '24px', overflow: 'hidden', position: 'relative' }}>
-                                <img src={property.images[1]} alt="Gallery 1" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.1)', transition: 'background-color 0.3s' }}></div>
-                            </div>
-                            <div style={{ borderRadius: '24px', overflow: 'hidden', position: 'relative' }}>
-                                <img src={property.images[2]} alt="Gallery 2" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: '1.5rem', fontWeight: '800' }}>+{property.images.length - 3} More</div>
-                                        <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>View Gallery</div>
-                                    </div>
+                            {property.hasPaymentPlan && (
+                                <div style={{ color: '#10b981', fontWeight: '600', fontSize: '1rem', marginTop: '0.25rem' }}>
+                                    50% accepted {property.currency}{(parseInt(property.price.toString().replace(/[^0-9]/g, '')) / 2).toLocaleString()}
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Content Area */}
-            <section style={{ padding: '3rem 0 8rem' }}>
-                <div className="container detail-main-layout">
-
-                    {/* Left Column - Details */}
-                    <div>
-                        {/* Quick Stats */}
-                        <div className="stats-grid">
-                            <div style={{ textAlign: 'center', borderRight: '1px solid #f1f5f9' }}>
-                                <div style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}><Bed size={24} /></div>
-                                <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--primary)' }}>{property.beds}</div>
-                                <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Bedrooms</div>
-                            </div>
-                            <div style={{ textAlign: 'center', borderRight: '1px solid #f1f5f9' }}>
-                                <div style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}><Bath size={24} /></div>
-                                <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--primary)' }}>{property.baths}</div>
-                                <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Bathrooms</div>
-                            </div>
-                            <div style={{ textAlign: 'center', borderRight: '1px solid #f1f5f9' }}>
-                                <div style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}><Square size={24} /></div>
-                                <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--primary)' }}>{property.sqft}</div>
-                                <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Sq Ft Area</div>
-                            </div>
-                            <div style={{ textAlign: 'center' }}>
-                                <div style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}><Calendar size={24} /></div>
-                                <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--primary)' }}>{property.yearBuilt}</div>
-                                <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>Year Built</div>
-                            </div>
+                            )}
                         </div>
 
-                        {/* Description */}
-                        <div style={{ marginBottom: '4rem' }}>
-                            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>
-                                Description
-                            </h2>
-                            <p style={{ color: 'var(--text-light)', lineHeight: 1.8, fontSize: '1.1rem', whiteSpace: 'pre-line' }}>
-                                {property.description}
-                            </p>
-                        </div>
-
-                        {/* Amenities */}
-                        <div style={{ marginBottom: '4rem' }}>
-                            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>
-                                Amenities & Features
-                            </h2>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                                {property.amenities.map((item, idx) => (
-                                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--primary)', fontWeight: '500' }}>
-                                        <CheckCircle2 size={18} color="var(--accent)" />
-                                        <span>{item}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div>
-                            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>
-                                Location
-                            </h2>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '1.1rem' }}>
-                                <MapPin size={24} color="var(--accent)" />
-                                <span>{property.location}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right Column - Sidebar */}
-                    <div>
-                        {/* Payment Plan Section */}
+                        {/* Payment Plan Calculator */}
                         {property.hasPaymentPlan && (
-                            <div style={{
-                                backgroundColor: 'white',
-                                padding: '2rem',
-                                borderRadius: '24px',
-                                boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)',
-                                marginBottom: '2rem'
-                            }}>
-                                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                    <CheckCircle2 size={24} color="#10b981" /> 50/50 Payment Plan
-                                </h3>
-                                <p style={{ fontSize: '0.95rem', color: '#64748b', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-                                    Pay <strong>50% upfront</strong> and the remaining 50% over your preferred period.
+                            <div style={{ backgroundColor: '#f8fafc', borderRadius: '16px', padding: '2rem', marginBottom: '2.5rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                                    <Calendar size={20} color="var(--accent)" />
+                                    <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#1a1a1a' }}>Payment Plan</h3>
+                                </div>
+                                <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                                    Choose your preferred payment period for the remaining 50% ({property.currency}{(parseInt(property.price.toString().replace(/[^0-9]/g, '')) / 2).toLocaleString()})
                                 </p>
 
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                                        <span style={{ color: '#64748b' }}>Upfront (50%)</span>
-                                        <span style={{ fontWeight: '700', color: 'var(--primary)' }}>{property.currency}{(property.price / 2).toLocaleString()}</span>
-                                    </div>
-                                    <div style={{ height: '8px', backgroundColor: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                                        <div style={{ width: '50%', height: '100%', backgroundColor: '#10b981' }}></div>
-                                    </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                                    {[
+                                        { months: 4 },
+                                        { months: 8 },
+                                        { months: 12 }
+                                    ].map((plan) => {
+                                        const cleanPrice = parseInt(property.price.toString().replace(/[^0-9]/g, '')) || 0;
+                                        const monthlyAmount = Math.round((cleanPrice / 2) / plan.months);
+                                        const isSelected = paymentPeriod === `${plan.months} Months`;
+
+                                        return (
+                                            <button
+                                                key={plan.months}
+                                                onClick={() => setPaymentPeriod(`${plan.months} Months`)}
+                                                style={{
+                                                    backgroundColor: 'white',
+                                                    border: isSelected ? '2px solid var(--accent)' : '1px solid #e2e8f0',
+                                                    borderRadius: '12px',
+                                                    padding: '1rem',
+                                                    cursor: 'pointer',
+                                                    textAlign: 'left',
+                                                    transition: 'all 0.2s',
+                                                    position: 'relative'
+                                                }}
+                                            >
+                                                {isSelected && (
+                                                    <div style={{ position: 'absolute', inset: 0, backgroundColor: 'var(--accent)', opacity: 0.05, borderRadius: '10px' }}></div>
+                                                )}
+                                                <div style={{ fontWeight: '800', fontSize: '0.9rem', color: isSelected ? 'var(--accent)' : '#1a1a1a', marginBottom: '0.25rem' }}>
+                                                    {plan.months} Months
+                                                </div>
+                                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                                                    {property.currency}{monthlyAmount.toLocaleString()}/month
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
 
-                                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: 'var(--primary)', marginBottom: '0.75rem' }}>SELECT INSTALLMENT PERIOD</label>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
-                                    {['4 Months', '8 Months', '12 Months'].map((period) => (
-                                        <button
-                                            key={period}
-                                            onClick={() => setPaymentPeriod(period)}
-                                            style={{
-                                                padding: '0.75rem 0.5rem',
-                                                borderRadius: '12px',
-                                                fontSize: '0.85rem',
-                                                fontWeight: '700',
-                                                border: '2px solid',
-                                                borderColor: paymentPeriod === period ? 'var(--accent)' : '#f1f5f9',
-                                                backgroundColor: paymentPeriod === period ? '#eff6ff' : 'white',
-                                                color: paymentPeriod === period ? 'var(--accent)' : '#64748b',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s'
-                                            }}
-                                        >
-                                            {period}
-                                        </button>
-                                    ))}
-                                </div>
-                                {paymentPeriod && (
-                                    <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px dashed #e2e8f0' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Monthly Payment</span>
-                                            <span style={{ fontWeight: '800', fontSize: '1.1rem', color: 'var(--accent)' }}>
-                                                {property.currency}{Math.round((property.price / 2) / parseInt(paymentPeriod)).toLocaleString()}
-                                            </span>
-                                        </div>
+                                <div style={{ backgroundColor: 'white', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                    <div style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '600', marginBottom: '0.25rem' }}>
+                                        Selected Plan: <span style={{ color: '#1a1a1a' }}>{paymentPeriod}</span>
                                     </div>
-                                )}
+                                    <div style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--accent)' }}>
+                                        {property.currency}{Math.round((parseInt(property.price.toString().replace(/[^0-9]/g, '')) / 2) / parseInt(paymentPeriod)).toLocaleString()}/month
+                                    </div>
+                                </div>
                             </div>
                         )}
 
-                        {/* Agent Card */}
-                        <div style={{
-                            backgroundColor: 'white',
-                            padding: '2.5rem',
-                            borderRadius: '24px',
-                            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)',
-                            position: 'sticky',
-                            top: '120px'
-                        }}>
-                            <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '2rem' }}>Contact Information</h3>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-                                <img
-                                    src={property.agent.image}
-                                    alt={property.agent.name}
-                                    style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover' }}
-                                />
-                                <div>
-                                    <div style={{ fontWeight: '800', color: 'var(--primary)', fontSize: '1.1rem' }}>{property.agent.name}</div>
-                                    <div style={{ color: 'var(--accent)', fontSize: '0.9rem', fontWeight: '600' }}>{property.agent.role}</div>
-                                </div>
+                        {/* Features Row */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '16px', marginBottom: '2.5rem' }}>
+                            <div style={{ textAlign: 'center' }}>
+                                <Bed size={24} style={{ marginBottom: '0.5rem', color: '#64748b' }} />
+                                <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>{property.beds}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Bedrooms</div>
                             </div>
-
-                            <AgentContactForm property={property} />
-
-                            <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#10b981', backgroundColor: '#ecfdf5', padding: '1rem', borderRadius: '12px', fontSize: '0.9rem' }}>
-                                <ShieldCheck size={20} />
-                                <span style={{ fontWeight: '600' }}>Verified Owusu Homes Agent</span>
+                            <div style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0' }}>
+                                <Bath size={24} style={{ marginBottom: '0.5rem', color: '#64748b' }} />
+                                <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>{property.baths}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Bathrooms</div>
+                            </div>
+                            <div style={{ textAlign: 'center', borderLeft: '1px solid #e2e8f0' }}>
+                                <Square size={24} style={{ marginBottom: '0.5rem', color: '#64748b' }} />
+                                <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>{property.sqft}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Square Feet</div>
                             </div>
                         </div>
+
+                        {/* Contact Button */}
+                        <a
+                            href={`tel:${property.agent.phone.replace(/\s+/g, '')}`}
+                            className="btn-accent"
+                            style={{
+                                width: '100%',
+                                padding: '1.25rem',
+                                borderRadius: '12px',
+                                fontSize: '1rem',
+                                fontWeight: '700',
+                                justifyContent: 'center',
+                                display: 'flex',
+                                textDecoration: 'none',
+                                alignItems: 'center'
+                            }}
+                        >
+                            <Phone size={20} style={{ marginRight: '0.5rem' }} /> Contact Agent
+                        </a>
                     </div>
-
                 </div>
-            </section>
 
-            <Footer />
-        </div>
-    );
-};
-
-const AgentContactForm = ({ property }) => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        message: `I'm interested in "${property.title || property.name}"`
-    });
-    const [status, setStatus] = useState({ loading: false, success: false });
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setStatus({ loading: true, success: false });
-        try {
-            await import('../services/api').then(m => m.inquiryService.create({
-                ...formData,
-                propertyId: property.id,
-                propertyTitle: property.title || property.name,
-                subject: `Property Inquiry: ${property.title || property.name}`
-            }));
-            setStatus({ loading: false, success: true });
-            setFormData(prev => ({ ...prev, name: '', email: '', phone: '' }));
-            setTimeout(() => setStatus({ loading: false, success: false }), 5000);
-        } catch (err) {
-            console.error(err);
-            setStatus({ loading: false, success: false });
-        }
-    };
-
-    if (status.success) {
-        return (
-            <div style={{ backgroundColor: '#ecfdf5', color: '#059669', padding: '1.5rem', borderRadius: '12px', textAlign: 'center', fontWeight: '700' }}>
-                <CheckCircle2 size={32} style={{ marginBottom: '0.5rem' }} />
-                <p>Inquiry sent successfully!</p>
+                <style>{`
+                    @media (max-width: 1024px) {
+                        .detail-grid {
+                            grid-template-columns: 1fr !important;
+                            gap: 2rem !important;
+                        }
+                    }
+                `}</style>
             </div>
-        );
-    }
-
-    return (
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <input
-                type="text"
-                placeholder="Your Name"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
-            />
-            <input
-                type="email"
-                placeholder="Your Email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
-            />
-            <input
-                type="tel"
-                placeholder="Your Phone"
-                required
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none' }}
-            />
-            <textarea
-                placeholder="Message..."
-                rows="4"
-                required
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', outline: 'none', resize: 'none' }}
-            ></textarea>
-
-            <button
-                type="submit"
-                disabled={status.loading}
-                className="btn btn-primary"
-                style={{ padding: '1.25rem', borderRadius: '12px', width: '100%', marginTop: '1rem', fontWeight: '700', opacity: status.loading ? 0.7 : 1 }}
-            >
-                {status.loading ? 'Sending...' : 'Contact Agent'}
-            </button>
-
-            <a href={`tel:${property.agent.phone}`} style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.75rem',
-                padding: '1.25rem',
-                borderRadius: '12px',
-                border: '2px solid #e2e8f0',
-                color: 'var(--primary)',
-                fontWeight: '700',
-                textDecoration: 'none',
-                transition: 'all 0.2s'
-            }}>
-                <Phone size={20} color="var(--accent)" /> {property.agent.phone}
-            </a>
-        </form>
+        </div>
     );
 };
 

@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const location = window.location;
+    const isHome = location.pathname === '/';
 
     useEffect(() => {
         const handleScroll = () => {
@@ -18,6 +20,8 @@ const Navbar = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const isDark = scrolled || !isHome;
 
     return (
         <>
@@ -61,19 +65,19 @@ const Navbar = () => {
 
                 {/* Main Navbar */}
                 <div style={{
-                    backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.1)',
+                    backgroundColor: isDark ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.1)',
                     backdropFilter: 'blur(10px)',
-                    boxShadow: scrolled ? 'var(--shadow-sm)' : 'none',
+                    boxShadow: isDark ? 'var(--shadow-sm)' : 'none',
                     padding: '1rem 0',
                     transition: 'all 0.3s ease',
-                    borderBottom: scrolled ? 'none' : '1px solid rgba(255, 255, 255, 0.1)'
+                    borderBottom: isDark ? 'none' : '1px solid rgba(255, 255, 255, 0.1)'
                 }}>
                     <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 
                         {/* Logo */}
-                        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.8rem', fontWeight: '800', color: scrolled ? 'var(--primary)' : 'white' }}>
+                        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.8rem', fontWeight: '800', color: isDark ? 'var(--primary)' : 'white' }}>
                             <img src="/logo.jpeg" alt="Owusu Homes Logo" style={{ height: '40px', width: '40px', objectFit: 'cover', borderRadius: '50%' }} />
-                            <span>Owusu <span style={{ color: scrolled ? 'var(--primary)' : 'white' }}>Homes</span></span>
+                            <span>Owusu <span style={{ color: isDark ? 'var(--primary)' : 'white' }}>Homes</span></span>
                         </Link>
 
                         {/* Desktop Menu */}
@@ -83,7 +87,7 @@ const Navbar = () => {
                                     key={item}
                                     to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
                                     style={{
-                                        color: scrolled ? 'var(--primary)' : 'white',
+                                        color: isDark ? 'var(--primary)' : 'white',
                                         fontWeight: '500',
                                         fontSize: '1rem',
                                     }}
@@ -96,7 +100,7 @@ const Navbar = () => {
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             style={{
-                                color: scrolled ? 'var(--primary)' : 'white'
+                                color: isDark ? 'var(--primary)' : 'white'
                             }}
                             className="mobile-toggle"
                         >
