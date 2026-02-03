@@ -15,7 +15,8 @@ CREATE TABLE properties (
   images TEXT[],
   status TEXT DEFAULT 'Active',
   hasPaymentPlan BOOLEAN DEFAULT FALSE,
-  currency TEXT DEFAULT 'GH₵'
+  currency TEXT DEFAULT 'GH₵',
+  agent JSONB
 );
 
 -- Inquiries Table

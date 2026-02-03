@@ -44,8 +44,8 @@ const ManageProperties = () => {
         baths: 0,
         size: '',
         description: '',
-        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80',
-        images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80'],
+        image: '',
+        images: [],
         status: 'Active',
         hasPaymentPlan: false,
         agent: {
@@ -177,8 +177,8 @@ const ManageProperties = () => {
             baths: 0,
             size: '',
             description: '',
-            image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80',
-            images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80'],
+            image: '',
+            images: [],
             status: 'Active',
             hasPaymentPlan: false,
             agent: {

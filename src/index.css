@@ -127,8 +127,8 @@ button {
 }
 
 .status-active {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success);
+  background: var(--accent);
+  color: white;
 }
 
 .status-pending {
