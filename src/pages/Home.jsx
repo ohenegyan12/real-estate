@@ -876,13 +876,12 @@ const Home = () => {
                                 <button style={{
                                     padding: '1.25rem 2.5rem',
                                     borderRadius: '50px',
-                                    border: 'none',
-                                    backgroundColor: 'white',
-                                    color: '#2563eb',
+                                    border: '2px solid white',
+                                    backgroundColor: 'transparent',
+                                    color: 'white',
                                     fontSize: '1.125rem',
                                     fontWeight: '700',
                                     cursor: 'pointer',
-                                    boxShadow: '0 10px 25px -5px rgba(255, 255, 255, 0.4)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '0.75rem'
