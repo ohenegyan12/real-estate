@@ -1,29 +1,5 @@
 [
   {
-    "id": 1770109965868,
-    "name": "test 2",
-    "type": "Villa",
-    "price": "200",
-    "location": "aburi",
-    "beds": "2",
-    "baths": "2",
-    "size": "2500",
-    "description": "",
-    "image": "",
-    "images": [],
-    "status": "Active",
-    "hasPaymentPlan": true,
-    "agent": {
-      "name": "",
-      "role": "Senior Agent",
-      "phone": "0548838479",
-      "email": "",
-      "image": "https://images.unsplash.com/photo-1560250097-9b93dbd96cd8?q=80&w=250&auto=format&fit=crop"
-    },
-    "currency": "GH₵",
-    "created_at": "2026-02-03T09:12:45.868Z"
-  },
-  {
     "id": 1770108005950,
     "name": "Test property",
     "type": "Apartment",
