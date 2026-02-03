@@ -22,7 +22,6 @@ const Footer = () => {
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '3rem' }}>
                 <div style={{ flex: '1 1 300px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', fontWeight: '800', marginBottom: '1.5rem', color: 'var(--accent)' }}>
-                        <img src="/logo.jpeg" alt="Owusu Homes Logo" style={{ height: '32px', width: '32px', objectFit: 'cover', borderRadius: '50%' }} />
                         <span style={{ color: 'white' }}>Owusu Homes</span>
                     </div>
                     <p style={{ color: '#aaa', lineHeight: 1.8 }}>
