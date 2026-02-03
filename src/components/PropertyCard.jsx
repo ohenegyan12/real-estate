@@ -113,10 +113,25 @@ const PropertyCard = ({ property }) => {
 
                 {/* Content Section */}
                 <div style={{ padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <h3 style={{
+                        fontSize: '1.5rem',
+                        marginBottom: '0.5rem',
+                        color: 'var(--primary)',
+                        fontWeight: '800',
+                        lineHeight: '1.3',
+                        fontFamily: 'var(--font-heading)',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                    }}>
+                        {property.title || property.name}
+                    </h3>
+
                     {/* Price & Rating Row */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                        <div style={{ fontSize: '1.75rem', fontWeight: '900', color: 'var(--primary)', letterSpacing: '-1px' }}>
-                            <span style={{ color: 'var(--accent)', fontSize: '1.2rem', marginRight: '2px' }}>{property.currency || 'GH₵'}</span>
+                        <div style={{ fontSize: '1.25rem', fontWeight: '900', color: 'var(--accent)', letterSpacing: '-0.5px' }}>
+                            <span style={{ fontSize: '1rem', marginRight: '2px' }}>{property.currency || 'GH₵'}</span>
                             {property.price.toLocaleString()}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#fff7ed', padding: '6px 10px', borderRadius: '12px' }}>
@@ -124,22 +139,6 @@ const PropertyCard = ({ property }) => {
                             <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#9a3412' }}>{property.rating || '4.8'}</span>
                         </div>
                     </div>
-
-                    <h3 style={{
-                        fontSize: '1.25rem',
-                        marginBottom: '0.75rem',
-                        color: 'var(--primary)',
-                        fontWeight: '800',
-                        lineHeight: '1.35',
-                        fontFamily: 'var(--font-heading)',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden',
-                        height: '3.4rem'
-                    }}>
-                        {property.title || property.name}
-                    </h3>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
                         <div style={{ minWidth: '18px' }}><MapPin size={18} color="var(--accent)" /></div>

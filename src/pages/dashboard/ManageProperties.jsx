@@ -19,6 +19,8 @@ import {
     Check
 } from 'lucide-react';
 
+import Toast from '../../components/Toast';
+
 const ManageProperties = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
@@ -27,12 +29,17 @@ const ManageProperties = () => {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+    };
 
     // Form state
     const [formData, setFormData] = useState({
@@ -77,6 +84,7 @@ const ManageProperties = () => {
             setProperties(data);
         } catch (error) {
             console.error('Error fetching properties:', error);
+            showToast('Failed to load properties', 'error');
         } finally {
             setLoading(false);
         }
@@ -155,12 +163,13 @@ const ManageProperties = () => {
                     images: [...prev.images, data.url],
                     image: prev.images.length === 0 ? data.url : prev.image
                 }));
+                showToast('Image uploaded successfully');
             } else {
                 throw new Error('Invalid response from server');
             }
         } catch (error) {
             console.error('Upload failed:', error);
-            alert(`Failed to upload image: ${error.message}`);
+            showToast(`Failed to upload image: ${error.message}`, 'error');
         } finally {
             setUploading(false);
         }
@@ -214,8 +223,10 @@ const ManageProperties = () => {
             try {
                 await propertyService.delete(id);
                 setProperties(properties.filter(p => p.id !== id));
+                showToast('Property deleted successfully');
             } catch (error) {
                 console.error('Error deleting property:', error);
+                showToast('Failed to delete property', 'error');
             }
         }
     };
@@ -226,14 +237,16 @@ const ManageProperties = () => {
             if (isEditing) {
                 const updated = await propertyService.update(selectedProperty.id, formData);
                 setProperties(properties.map(p => p.id === selectedProperty.id ? updated : p));
+                showToast('Property updated successfully');
             } else {
                 const created = await propertyService.create(formData);
                 setProperties([created, ...properties]);
+                showToast('Property added successfully');
             }
             setShowAddModal(false);
         } catch (error) {
             console.error('Error saving property:', error);
-            alert(`Failed to save property: ${error.message}`);
+            showToast(`Failed to save property: ${error.message}`, 'error');
         }
     };
 
@@ -801,6 +814,13 @@ const ManageProperties = () => {
                         </form>
                     </div>
                 </div>
+            )}
+            {toast.show && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast({ ...toast, show: false })}
+                />
             )}
         </div>
     );
