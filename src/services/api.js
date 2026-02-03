@@ -1,11 +1,20 @@
 const API_BASE_URL = '/api';
 
 const handleResponse = async (response) => {
-    const data = await response.json();
-    if (!response.ok) {
-        throw new Error(data.message || data.error || 'API request failed');
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || data.error || 'API request failed');
+        }
+        return data;
+    } else {
+        const text = await response.text();
+        if (!response.ok) {
+            throw new Error(text || 'API request failed');
+        }
+        return { message: 'Success', result: text }; // Fallback for non-JSON success
     }
-    return data;
 };
 
 export const propertyService = {
