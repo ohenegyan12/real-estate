@@ -1,19 +1,19 @@
 {
   "stats": {
-    "yearsExperience": "2",
-    "propertiesListed": "0",
-    "happyClients": "0",
+    "yearsExperience": "1",
+    "propertiesListed": "3",
+    "happyClients": "15",
     "awardsWon": "0"
   },
   "contact": {
     "phone": "0553364848",
     "email": "owusuhomesgh@gmail.com",
-    "address": "123 Luxury Lane, East Legon, Accra, Ghana"
+    "address": "East Legon"
   },
   "social": {
-    "facebook": "https://facebook.com/owusuhomes",
-    "instagram": "https://instagram.com/owusuhomes",
-    "twitter": "https://twitter.com/owusuhomes",
-    "linkedin": "https://linkedin.com/company/owusuhomes"
+    "facebook": "owusuhomes",
+    "instagram": "owusuhomes",
+    "twitter": "owusuhomes",
+    "linkedin": "owusuhomes"
   }
 }

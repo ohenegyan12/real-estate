@@ -34,7 +34,6 @@ const Footer = () => {
                     <ul style={{ listStyle: 'none', color: '#aaa', padding: 0 }}>
                         <li style={{ marginBottom: '0.8rem' }}><a href="/" className="hover-text-accent">Home</a></li>
                         <li style={{ marginBottom: '0.8rem' }}><a href="/properties" className="hover-text-accent">Properties</a></li>
-                        <li style={{ marginBottom: '0.8rem' }}><a href="/agents" className="hover-text-accent">Agents</a></li>
                         <li style={{ marginBottom: '0.8rem' }}><a href="/about" className="hover-text-accent">About Us</a></li>
                     </ul>
                 </div>

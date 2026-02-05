@@ -416,7 +416,11 @@ const Home = () => {
                     </div>
 
                     <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-                        <button className="btn btn-primary" style={{ padding: '1rem 2.5rem', borderRadius: '50px', fontSize: '1rem' }}>
+                        <button
+                            onClick={() => navigate('/properties')}
+                            className="btn btn-primary"
+                            style={{ padding: '1rem 2.5rem', borderRadius: '50px', fontSize: '1rem' }}
+                        >
                             View All Properties <ArrowRight size={18} style={{ marginLeft: '8px' }} />
                         </button>
                     </div>
@@ -525,26 +529,16 @@ const Home = () => {
                             }, {});
 
                             const locImages = {
-                                'Spintex': 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=2670&auto=format&fit=crop',
-                                'Oyarifa': 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop',
-                                'East Airport': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop',
-                                'East Legon': 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=2584&auto=format&fit=crop',
-                                'Tse Addo': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop',
-                                'Adenta': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop',
-                                'Lakeside': 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?q=80&w=2670&auto=format&fit=crop',
-                                'Default': 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?q=80&w=2592&auto=format&fit=crop'
+                                'Default': '/image.png'
                             };
 
                             const locs = Object.entries(locCounts)
                                 .map(([name, count]) => {
                                     const normalizedName = name.trim();
-                                    const imgKey = Object.keys(locImages).find(k =>
-                                        normalizedName.toLowerCase().includes(k.toLowerCase())
-                                    );
                                     return {
                                         name: normalizedName,
                                         count: `${count} Propert${count === 1 ? 'y' : 'ies'}`,
-                                        image: locImages[imgKey] || locImages['Default']
+                                        image: '/image.png'
                                     };
                                 })
                                 .sort((a, b) => parseInt(b.count) - parseInt(a.count))
@@ -552,9 +546,9 @@ const Home = () => {
 
                             // If no properties, show defaults so section isn't empty
                             const displayLocs = locs.length > 0 ? locs : [
-                                { name: 'Spintex', count: '0 Properties', image: locImages['Spintex'] },
-                                { name: 'Oyarifa', count: '0 Properties', image: locImages['Oyarifa'] },
-                                { name: 'East Airport', count: '0 Properties', image: locImages['East Airport'] }
+                                { name: 'Spintex', count: '0 Properties', image: '/image.png' },
+                                { name: 'Oyarifa', count: '0 Properties', image: '/image.png' },
+                                { name: 'East Airport', count: '0 Properties', image: '/image.png' }
                             ];
 
                             return displayLocs.map((location, index) => (
@@ -834,7 +828,7 @@ const Home = () => {
                     </div>
 
                     <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-                        <button className="btn btn-outline" style={{ padding: '1rem 2.5rem', borderRadius: '50px', fontSize: '1rem', border: '2px solid var(--primary)', color: 'var(--primary)', fontWeight: '600' }}>
+                        <button className="btn btn-outline" style={{ padding: '1rem 2.5rem', borderRadius: '50px', fontSize: '1rem', border: '2px solid var(--primary)', fontWeight: '600' }}>
                             View All Articles
                         </button>
                     </div>
@@ -873,19 +867,21 @@ const Home = () => {
                             </p>
 
                             <div style={{ display: 'flex', gap: '1rem' }}>
-                                <button style={{
-                                    padding: '1.25rem 2.5rem',
-                                    borderRadius: '50px',
-                                    border: '2px solid white',
-                                    backgroundColor: 'transparent',
-                                    color: 'white',
-                                    fontSize: '1.125rem',
-                                    fontWeight: '700',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.75rem'
-                                }}>
+                                <button
+                                    onClick={() => navigate('/properties')}
+                                    style={{
+                                        padding: '1.25rem 2.5rem',
+                                        borderRadius: '50px',
+                                        border: '2px solid white',
+                                        backgroundColor: 'transparent',
+                                        color: 'white',
+                                        fontSize: '1.125rem',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem'
+                                    }}>
                                     Explore Properties <ArrowRight size={20} />
                                 </button>
                             </div>

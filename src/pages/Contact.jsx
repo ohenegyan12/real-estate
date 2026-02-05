@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, Send, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
 import { inquiryService } from '../services/api';
 
 const Contact = () => {
@@ -37,13 +37,13 @@ const Contact = () => {
         {
             icon: <Phone size={24} />,
             title: "Phone Number",
-            details: ["+233 55 336 4848", "+233 24 123 4567"],
+            details: ["+233 55 336 4848"],
             color: "#eff6ff"
         },
         {
             icon: <Mail size={24} />,
             title: "Email Address",
-            details: ["owusuhomesgh@gmail.com", "support@owusuhomes.com"],
+            details: ["owusuhomesgh@gmail.com"],
             color: "#fff7ed"
         },
         {
@@ -132,7 +132,7 @@ const Contact = () => {
                 </div>
             </section>
 
-            {/* Form and Map */}
+            {/* Form and info */}
             <section className="section-padding">
                 <style>{`
                     .contact-grid {
@@ -255,7 +255,7 @@ const Contact = () => {
                         </form>
                     </motion.div>
 
-                    {/* Side Info & Socials */}
+                    {/* Side Info */}
                     <motion.div
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -271,51 +271,6 @@ const Contact = () => {
                                         <div style={{ fontWeight: '800', color: 'var(--primary)', fontSize: '1.1rem' }}>Business Hours</div>
                                         <div style={{ color: '#64748b', fontSize: '1rem' }}>Monday - Friday: 9am - 6pm</div>
                                         <div style={{ color: '#64748b', fontSize: '1rem' }}>Saturday: 10am - 4pm</div>
-                                    </div>
-                                </div>
-
-                                <div style={{ paddingTop: '2rem', borderTop: '1px solid #f1f5f9' }}>
-                                    <h4 style={{ fontWeight: '800', color: 'var(--primary)', marginBottom: '1.5rem' }}>Follow Our Socials</h4>
-                                    <div style={{ display: 'flex', gap: '1rem' }}>
-                                        {[<Facebook />, <Twitter />, <Instagram />, <Linkedin />].map((icon, i) => (
-                                            <button key={i} style={{
-                                                width: '50px',
-                                                height: '50px',
-                                                borderRadius: '12px',
-                                                border: '1px solid #e2e8f0',
-                                                backgroundColor: 'white',
-                                                color: 'var(--primary)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.2s'
-                                            }}
-                                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#eff6ff'}
-                                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}
-                                            >
-                                                {icon}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Map Placeholder */}
-                                <div style={{
-                                    marginTop: '2rem',
-                                    height: '250px',
-                                    backgroundColor: '#f1f5f9',
-                                    borderRadius: '24px',
-                                    overflow: 'hidden',
-                                    position: 'relative'
-                                }}>
-                                    <img
-                                        src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2674&auto=format&fit=crop"
-                                        alt="Map"
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }}
-                                    />
-                                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-                                        <MapPin size={40} color="#ef4444" fill="white" />
                                     </div>
                                 </div>
                             </div>
