@@ -65,7 +65,7 @@ const PropertyDetail = () => {
             <Navbar />
 
             {/* Back Button */}
-            <div className="container" style={{ paddingTop: '8rem', paddingBottom: '1rem' }}>
+            <div className="container detail-header-container" style={{ paddingTop: '8rem', paddingBottom: '2.5rem' }}>
                 <Link to="/properties" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.9rem', fontWeight: '500', width: 'fit-content' }}>
                     <ChevronLeft size={18} /> Back to Properties
                 </Link>
@@ -75,7 +75,7 @@ const PropertyDetail = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '4rem' }} className="detail-grid">
                     {/* Left Column: Image Gallery */}
                     <div>
-                        <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '500px', backgroundColor: '#f1f5f9', marginBottom: '1rem' }}>
+                        <div className="detail-img-container" style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '500px', backgroundColor: '#f1f5f9', marginBottom: '1rem' }}>
                             <AnimatePresence mode='wait'>
                                 <motion.img
                                     key={activeImage}
@@ -154,11 +154,12 @@ const PropertyDetail = () => {
 
                         {/* Thumbnails */}
                         {property.images.length > 1 && (
-                            <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                            <div className="thumbnail-scroll" style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '1rem', scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch', marginTop: '1.5rem' }}>
                                 {property.images.map((img, idx) => (
                                     <button
                                         key={idx}
                                         onClick={() => setActiveImage(idx)}
+                                        className="thumbnail-btn"
                                         style={{
                                             width: '80px',
                                             height: '80px',
@@ -185,7 +186,7 @@ const PropertyDetail = () => {
                             <Star size={18} fill="#f59e0b" /> {property.rating} Rating
                         </div>
 
-                        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1a1a1a', lineHeight: '1.2', marginBottom: '1rem' }}>
+                        <h1 className="property-title" style={{ fontSize: '2.5rem', fontWeight: '800', color: '#1a1a1a', lineHeight: '1.2', marginBottom: '1rem' }}>
                             {property.title || property.name}
                         </h1>
 
@@ -195,7 +196,7 @@ const PropertyDetail = () => {
 
                         {/* Price Section */}
                         <div style={{ marginBottom: '2.5rem' }}>
-                            <div style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--primary)', letterSpacing: '-0.5px' }}>
+                            <div className="property-price" style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--primary)', letterSpacing: '-0.5px' }}>
                                 {property.currency}{property.price.toLocaleString()}
                             </div>
                             {property.hasPaymentPlan && (
@@ -216,7 +217,7 @@ const PropertyDetail = () => {
                                     Choose your preferred payment period for the remaining 50% ({property.currency}{(parseInt(property.price.toString().replace(/[^0-9]/g, '')) / 2).toLocaleString()})
                                 </p>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                                <div className="payment-plan-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
                                     {[
                                         { months: 4 },
                                         { months: 8 },
@@ -267,7 +268,7 @@ const PropertyDetail = () => {
                         )}
 
                         {/* Features Row */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '16px', marginBottom: '2.5rem' }}>
+                        <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', backgroundColor: '#f8fafc', padding: '1.5rem', borderRadius: '16px', marginBottom: '2.5rem' }}>
                             <div style={{ textAlign: 'center' }}>
                                 <Bed size={24} style={{ marginBottom: '0.5rem', color: '#64748b' }} />
                                 <div style={{ fontWeight: '800', fontSize: '1.1rem' }}>{property.beds}</div>
@@ -309,8 +310,55 @@ const PropertyDetail = () => {
                 <style>{`
                     @media (max-width: 1024px) {
                         .detail-grid {
-                            grid-template-columns: 1fr !important;
+                            grid-template-columns: 100% !important;
                             gap: 2rem !important;
+                            width: 100% !important;
+                            display: block !important;
+                        }
+                    }
+                    @media (max-width: 768px) {
+                        .container {
+                            padding: 0 1rem !important;
+                            max-width: 100% !important;
+                            overflow-x: hidden !important;
+                        }
+                        .detail-img-container {
+                            height: 300px !important;
+                            width: 100% !important;
+                            margin: 0 !important;
+                        }
+                        .detail-header-container {
+                            padding-top: 6rem !important;
+                            padding-bottom: 2rem !important;
+                        }
+                        .property-title {
+                            font-size: 1.75rem !important;
+                        }
+                        .property-price {
+                            font-size: 2rem !important;
+                        }
+                        .payment-plan-grid,
+                        .features-grid {
+                            grid-template-columns: 1fr !important;
+                            gap: 1rem !important;
+                        }
+                        .thumbnail-btn {
+                            width: 60px !important;
+                            height: 60px !important;
+                            flex-shrink: 0 !important;
+                        }
+                        .thumbnail-scroll {
+                            display: flex !important;
+                            flex-wrap: nowrap !important;
+                            overflow-x: auto !important;
+                            margin-left: -1rem !important;
+                            margin-right: -1rem !important;
+                            width: auto !important;
+                            padding-left: 1rem !important;
+                            padding-right: 1rem !important;
+                            gap: 0.5rem !important;
+                            -webkit-overflow-scrolling: touch !important;
+                            /* Removing scrollbar hiding to show scrollability clearly */
                         }
                     }
                 `}</style>
