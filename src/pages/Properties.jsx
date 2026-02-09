@@ -6,6 +6,7 @@ import PropertyCard from '../components/PropertyCard';
 import { propertyService } from '../services/api';
 import { Search, ChevronDown, Filter, LayoutGrid, List, SlidersHorizontal, MapPin, Home as HomeIcon, Bed, Bath, ArrowRight, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import SEO from '../components/SEO';
 
 const Properties = () => {
     const location = useLocation();
@@ -111,6 +112,10 @@ const Properties = () => {
 
     return (
         <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+            <SEO
+                title="Properties for Sale & Rent | Owusu Homes"
+                description="Browse our extensive list of properties for sale and rent in Ghana. Find your perfect home today."
+            />
             <Navbar />
 
             {/* Sub-header / Hero */}

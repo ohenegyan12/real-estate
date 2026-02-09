@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
 import { inquiryService } from '../services/api';
+import SEO from '../components/SEO';
 
 const Contact = () => {
     const [formData, setFormData] = React.useState({
@@ -56,6 +57,10 @@ const Contact = () => {
 
     return (
         <div style={{ backgroundColor: '#f8fafc' }}>
+            <SEO
+                title="Contact Us | Owusu Homes"
+                description="Get in touch with Owusu Homes. We are here to help you find your dream property in Ghana."
+            />
             <Navbar />
 
             {/* Hero Section */}

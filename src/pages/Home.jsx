@@ -7,6 +7,7 @@ import Counter from '../components/Counter';
 import { propertyService, settingsService, categoryService } from '../services/api';
 import { Search, ChevronDown, MapPin, Building, Home as HomeIcon, Building2, Store, ArrowLeft, ArrowRight, Users, ThumbsUp, CheckCircle, Calendar, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -98,6 +99,11 @@ const Home = () => {
 
     return (
         <div>
+            <SEO
+                title="Owusu Homes | Premium Real Estate in Ghana"
+                description="Discover exclusive properties, luxury apartments, and dream homes in Accra and Kumasi. Your trusted partner for buying, selling, and renting real estate in Ghana."
+                keywords="real estate ghana, homes for sale accra, luxury apartments kumasi, owusu homes, buy house ghana"
+            />
             <Navbar />
 
             {/* Hero Section */}

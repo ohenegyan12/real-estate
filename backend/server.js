@@ -17,8 +17,14 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Ensure directories exist
-await fs.mkdir(UPLOADS_DIR, { recursive: true });
-await fs.mkdir(DATA_DIR, { recursive: true });
+try {
+    if (process.env.NODE_ENV !== 'production') {
+        await fs.mkdir(UPLOADS_DIR, { recursive: true });
+        await fs.mkdir(DATA_DIR, { recursive: true });
+    }
+} catch (e) {
+    console.warn('Skipping mkdir (read-only fs)');
+}
 
 // Multer setup for temporary storage during upload
 const upload = multer({ storage: multer.memoryStorage() });
