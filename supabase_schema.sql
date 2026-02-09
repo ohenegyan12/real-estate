@@ -13,6 +13,7 @@ CREATE TABLE properties (
   description TEXT,
   image TEXT,
   images TEXT[],
+  amenities TEXT[],
   status TEXT DEFAULT 'Active',
   hasPaymentPlan BOOLEAN DEFAULT FALSE,
   currency TEXT DEFAULT 'GH₵',

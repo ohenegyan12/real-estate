@@ -73,26 +73,110 @@ const PropertyDetail = () => {
 
             <div className="container" style={{ maxWidth: '1280px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '4rem' }} className="detail-grid">
-                    {/* Left Column: Image */}
+                    {/* Left Column: Image Gallery */}
                     <div>
-                        <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '600px', backgroundColor: '#f1f5f9' }}>
-                            <img
-                                src={property.images[0]}
-                                alt={property.title}
-                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
+                        <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', height: '500px', backgroundColor: '#f1f5f9', marginBottom: '1rem' }}>
+                            <AnimatePresence mode='wait'>
+                                <motion.img
+                                    key={activeImage}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    src={property.images[activeImage]}
+                                    alt={property.title}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            </AnimatePresence>
+
                             {/* Badges */}
-                            <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem' }}>
+                            <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', zIndex: 10 }}>
                                 <span style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700' }}>
                                     {property.status}
                                 </span>
                             </div>
-                            <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem' }}>
+                            <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 10 }}>
                                 <span style={{ backgroundColor: '#10b981', color: 'white', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.85rem', fontWeight: '700' }}>
                                     New
                                 </span>
                             </div>
+
+                            {/* Navigation Arrows */}
+                            {property.images.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={prevImage}
+                                        style={{
+                                            position: 'absolute',
+                                            left: '1rem',
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            width: '40px',
+                                            height: '40px',
+                                            borderRadius: '50%',
+                                            backgroundColor: 'rgba(255,255,255,0.9)',
+                                            border: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: 'pointer',
+                                            zIndex: 20,
+                                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                        }}
+                                    >
+                                        <ChevronLeft size={24} color="#1e293b" />
+                                    </button>
+                                    <button
+                                        onClick={nextImage}
+                                        style={{
+                                            position: 'absolute',
+                                            right: '1rem',
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            width: '40px',
+                                            height: '40px',
+                                            borderRadius: '50%',
+                                            backgroundColor: 'rgba(255,255,255,0.9)',
+                                            border: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: 'pointer',
+                                            zIndex: 20,
+                                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                        }}
+                                    >
+                                        <ChevronRight size={24} color="#1e293b" />
+                                    </button>
+                                </>
+                            )}
                         </div>
+
+                        {/* Thumbnails */}
+                        {property.images.length > 1 && (
+                            <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                                {property.images.map((img, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setActiveImage(idx)}
+                                        style={{
+                                            width: '80px',
+                                            height: '80px',
+                                            borderRadius: '12px',
+                                            overflow: 'hidden',
+                                            border: activeImage === idx ? '2px solid var(--accent)' : '2px solid transparent',
+                                            padding: 0,
+                                            cursor: 'pointer',
+                                            flexShrink: 0,
+                                            opacity: activeImage === idx ? 1 : 0.6,
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        <img src={img} alt={`Thumbnail ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Right Column: Details */}

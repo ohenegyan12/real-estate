@@ -26,7 +26,7 @@ const PropertyCard = ({ property }) => {
                 {/* Image Section */}
                 <div style={{ position: 'relative', height: '280px', overflow: 'hidden' }}>
                     <img
-                        src={property.image}
+                        src={(property.images && property.images.length > 0) ? property.images[0] : property.image}
                         alt={property.title}
                         style={{
                             width: '100%',
