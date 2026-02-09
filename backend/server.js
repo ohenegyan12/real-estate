@@ -291,18 +291,18 @@ app.patch('/api/properties/:id/status', async (req, res) => {
 app.delete('/api/properties/:id', async (req, res) => {
     const { id } = req.params;
 
+    // Supabase Delete (Attempt first, but don't block local)
     try {
         const { error } = await supabase
             .from('properties')
             .delete()
             .eq('id', id);
 
-        if (error) {
-            console.error('Supabase delete error:', error);
-            return res.status(400).json({ message: error.message });
+        if (error && error.message !== 'Supabase not configured') {
+            console.warn('Supabase delete warning:', error.message);
         }
     } catch (e) {
-        return res.status(500).json({ message: 'Server error during delete' });
+        console.warn('Supabase delete failed:', e.message);
     }
 
     // File system delete (Local Dev only)
