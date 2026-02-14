@@ -151,27 +151,50 @@ const ManageProperties = () => {
     };
 
     const handleFileUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
 
         setUploading(true);
+        let successCount = 0;
+        let failCount = 0;
+
         try {
-            const data = await mediaService.upload(file);
-            if (data && data.url) {
-                setFormData(prev => ({
-                    ...prev,
-                    images: [...prev.images, data.url],
-                    image: prev.images.length === 0 ? data.url : prev.image
-                }));
-                showToast('Image uploaded successfully');
-            } else {
-                throw new Error('Invalid response from server');
+            // Process uploads concurrently
+            const uploadPromises = files.map(async (file) => {
+                try {
+                    const data = await mediaService.upload(file);
+                    if (data && data.url) {
+                        setFormData(prev => {
+                            const newImages = [...(prev.images || []), data.url];
+                            return {
+                                ...prev,
+                                images: newImages,
+                                image: prev.image || data.url // Use first image as main if not already set
+                            };
+                        });
+                        successCount++;
+                    }
+                } catch (error) {
+                    console.error('Individual upload failed:', error);
+                    failCount++;
+                }
+            });
+
+            await Promise.all(uploadPromises);
+
+            if (successCount > 0) {
+                showToast(`Successfully uploaded ${successCount} image${successCount > 1 ? 's' : ''}`);
+            }
+            if (failCount > 0) {
+                showToast(`Failed to upload ${failCount} image${failCount > 1 ? 's' : ''}`, 'error');
             }
         } catch (error) {
-            console.error('Upload failed:', error);
-            showToast(`Failed to upload image: ${error.message}`, 'error');
+            console.error('Upload process failed:', error);
+            showToast(`Upload failed: ${error.message}`, 'error');
         } finally {
             setUploading(false);
+            // Reset the input so the same files can be selected again
+            e.target.value = '';
         }
     };
 
@@ -695,6 +718,7 @@ const ManageProperties = () => {
                                                     accept="image/*"
                                                     onChange={handleFileUpload}
                                                     disabled={uploading}
+                                                    multiple
                                                 />
                                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
                                                     <div style={{

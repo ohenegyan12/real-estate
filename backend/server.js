@@ -582,7 +582,8 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
 app.post('/api/upload', upload.single('file'), async (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'No file' });
 
-    const fileName = `${Date.now()}-${req.file.originalname.replace(/\s+/g, '-')}`;
+    const randomSuffix = Math.random().toString(36).substring(2, 8);
+    const fileName = `${Date.now()}-${randomSuffix}-${req.file.originalname.replace(/\s+/g, '-')}`;
 
     try {
         // Try Supabase upload first
